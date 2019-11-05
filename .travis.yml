@@ -1,0 +1,30 @@
+language: go
+go:
+  - 1.13.4
+env:
+  global:
+    - SHA512_CMD=sha512sum
+    - GO111MODULE=on
+matrix:
+  include:
+  - os: linux
+    dist: bionic
+  - os: osx
+    env:
+      - SHA512_CMD="shasum -a 512"
+  - os: windows
+script:
+  - diff -u <(echo -n) <(gofmt -d ./)
+  - export DELIVERABLE="dip-${TRAVIS_OS_NAME}"
+  - go build -ldflags "-X dip/cmd.Version=${TRAVIS_TAG}" -o $DELIVERABLE
+  - $SHA512_CMD $DELIVERABLE > ${DELIVERABLE}.sha512.txt
+  - chmod +x $DELIVERABLE
+artifacts:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file:
+    - $DELIVERABLE
+    - ${DELIVERABLE}.sha512.txt
+  skip_cleanup: true
+  on:
+    tags: true
