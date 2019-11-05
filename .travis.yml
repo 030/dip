@@ -14,7 +14,7 @@ matrix:
       - SHA512_CMD="shasum -a 512"
   - os: windows
 script:
-  - diff -u <(echo -n) <(gofmt -d ./)
+  - if [ $TRAVIS_OS_NAME == linux ]; then diff -u <(echo -n) <(gofmt -d ./); fi
   - export DELIVERABLE="dip-${TRAVIS_OS_NAME}"
   - go build -ldflags "-X dip/cmd.Version=${TRAVIS_TAG}" -o $DELIVERABLE
   - $SHA512_CMD $DELIVERABLE > ${DELIVERABLE}.sha512.txt
