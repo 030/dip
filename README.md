@@ -1,5 +1,7 @@
 # DIP
 
+[![Build Status](https://travis-ci.org/030/dip.svg?branch=master)](https://travis-ci.org/030/dip)
+
 Docker Image Patrol (DIP) keeps docker images up-to-date.
 
 ## Usage
