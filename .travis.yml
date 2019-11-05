@@ -19,7 +19,7 @@ script:
   - go build -ldflags "-X dip/cmd.Version=${TRAVIS_TAG}" -o $DELIVERABLE
   - $SHA512_CMD $DELIVERABLE > ${DELIVERABLE}.sha512.txt
   - chmod +x $DELIVERABLE
-artifacts:
+deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   file:
