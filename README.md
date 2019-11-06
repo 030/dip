@@ -1,9 +1,9 @@
 # DIP
 
-[![GoDoc Widget](https://godoc.org/github.com/030/dip)](https://godoc.org/github.com/030/dip?status.svg)
+[![GoDoc Widget](https://godoc.org/github.com/030/dip?status.svg)](https://godoc.org/github.com/030/dip)
 [![Go Report Card](https://goreportcard.com/badge/github.com/030/dip)](https://goreportcard.com/report/github.com/030/dip)
 [![Build Status](https://travis-ci.org/030/dip.svg?branch=master)](https://travis-ci.org/030/dip)
-![DevOps SE Questions](https://img.shields.io/stackexchange/devops/t/dip.svg)
+[![DevOps SE Questions](https://img.shields.io/stackexchange/devops/t/dip.svg)](https://devops.stackexchange.com/questions/tagged/dip)
 
 Docker Image Patrol (DIP) keeps docker images up-to-date.
 
