@@ -2,9 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os/exec"
-	"strconv"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -29,7 +27,13 @@ func absent(image, registry string) bool {
 	cmd := "docker pull " + registry + image
 	out, err := exec.Command("bash", "-c", cmd).CombinedOutput()
 	outString := string(out)
-	log.Debug("Command: " + cmd + "; Output: " + outString)
+
+	log.WithFields(log.Fields{
+		"cmd":      cmd,
+		"output":   outString,
+		"image":    image,
+		"registry": registry,
+	}).Debug("Whether an image is absent in a registry")
 
 	if err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
@@ -53,9 +57,11 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	log.Debug("debug: ", *debug, "; image: ", *image, "; registry: ", *registry)
-
 	dockerImageAbsent := absent(*image, *registry)
 
-	fmt.Println("Is image: '" + *image + "' absent in registry: '" + *registry + "'? -> " + strconv.FormatBool((dockerImageAbsent)))
+	if !dockerImageAbsent {
+		log.Fatal("Docker image: ", *image, " already exists in registry: ", *registry)
+	} else {
+		log.Info("Docker image: ", *image, " does NOT exist in registry: ", *registry)
+	}
 }
