@@ -30,3 +30,17 @@ dip -image nginx:1.17.5-alpine -registry quay.io/some-org/
 
 An ```exit 0``` will be returned if the image is absent and an ```exit 1``` is
 applicable if it already exists to prevent that the tag gets overwritten.
+
+## preserve
+
+### nginx
+
+```bash
+go run main.go -image nginx -tagType ".*(\d+\.){2}\d-alpine$"
+```
+
+### ubuntu
+
+```bash
+go run main.go -image ubuntu -tagType "xenial-\d.*"
+```
