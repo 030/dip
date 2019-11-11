@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"os/exec"
 	"regexp"
 
@@ -114,14 +115,37 @@ func main() {
 		i = *image + latestDetectedTag
 		dockerImageAbsent := absent(i, *registry)
 		if !dockerImageAbsent {
-			log.Fatal("Docker image: ", i, " already exists in registry: ", *registry)
+			msg := "Docker image: " + i + " already exists in registry: " + *registry
+			if *preserve {
+				// Never return an exit1 if the aim is to preserve an image as
+				// the CI will become RED, while it should be green if an image
+				// is already present
+				log.Info(msg)
+				os.Exit(0)
+			} else {
+				// Return an Exit1 if an image already exists to prevent that
+				// it gets overwritten if tagImmutability is absent in a
+				// docker registry
+				log.Fatal(msg)
+			}
 		} else {
 			log.Info("Docker image: ", i, " does NOT exist in registry: ", *registry)
 		}
 	}
 
 	if *preserve {
-		command("docker tag " + i + " " + *registry + i)
-		command("docker push " + *registry + i)
+		var cmd string
+
+		cmd = "docker pull " + i
+		log.Info(cmd)
+		command(cmd)
+
+		cmd = "docker tag " + i + " " + *registry + i
+		log.Info(cmd)
+		command(cmd)
+
+		cmd = "docker push " + *registry + i
+		log.Info(cmd)
+		command(cmd)
 	}
 }
