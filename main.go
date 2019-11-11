@@ -2,8 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os/exec"
+	"regexp"
 
+	"github.com/buger/jsonparser"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -46,10 +51,51 @@ func absent(image, registry string) bool {
 	return false
 }
 
+// tags returns tag json formatted information from dockerhub
+func tags(image string) *http.Response {
+	resp, err := http.Get("https://registry.hub.docker.com/v2/repositories/library/" + image + "/tags?page_size=1024")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return resp
+}
+
+// readResp reads a http response and returns it as byte
+func readResp(resp *http.Response) []byte {
+	defer resp.Body.Close()
+	var b []byte
+	var err error
+	if resp.StatusCode == http.StatusOK {
+		b, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return b
+}
+
+// latestTag returns the latest tag of a docker image
+func latestTag(b []byte, t string) string {
+	var c string
+	var arr []string
+	jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		s, _ := jsonparser.GetString(value, "name")
+		a := fmt.Sprintf(`%s`, t)
+		re := regexp.MustCompile(a)
+		if re.FindString(s) != "" {
+			c = fmt.Sprintf("%v", re.FindString(s))
+			arr = append(arr, c)
+		}
+	}, "results")
+	return arr[0]
+}
+
 func main() {
-	debug := flag.Bool("debug", false, "Whether debug mode should be enabled")
-	image := flag.String("image", "", "The origin of the image, e.g. nginx:1.17.5-alpine")
+	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
+	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
+	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
 	registry := flag.String("registry", "", "To what destination the image should be transferred, e.g. quay.io/some-org/. Note: do not omit the last forward slash.")
+	preserve := flag.Bool("preserve", false, "Whether an image from dockerhub should be stored in a private registry.")
 
 	flag.Parse()
 
@@ -57,11 +103,25 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	dockerImageAbsent := absent(*image, *registry)
+	var latestDetectedTag string
+	if *latest != "" {
+		latestDetectedTag = ":" + latestTag(readResp(tags(*image)), *latest)
+		fmt.Println(latestDetectedTag)
+	}
 
-	if !dockerImageAbsent {
-		log.Fatal("Docker image: ", *image, " already exists in registry: ", *registry)
-	} else {
-		log.Info("Docker image: ", *image, " does NOT exist in registry: ", *registry)
+	var i string
+	if *registry != "" {
+		i = *image + latestDetectedTag
+		dockerImageAbsent := absent(i, *registry)
+		if !dockerImageAbsent {
+			log.Fatal("Docker image: ", i, " already exists in registry: ", *registry)
+		} else {
+			log.Info("Docker image: ", i, " does NOT exist in registry: ", *registry)
+		}
+	}
+
+	if *preserve {
+		command("docker tag " + i + " " + *registry + i)
+		command("docker push " + *registry + i)
 	}
 }
