@@ -121,7 +121,7 @@ func main() {
 	}
 
 	if *preserve {
-		log.Info("docker tag " + i + " " + *registry + i)
-		log.Info("docker push " + *registry + i)
+		command("docker tag " + i + " " + *registry + i)
+		command("docker push " + *registry + i)
 	}
 }
