@@ -30,3 +30,37 @@ dip -image nginx:1.17.5-alpine -registry quay.io/some-org/
 
 An ```exit 0``` will be returned if the image is absent and an ```exit 1``` is
 applicable if it already exists to prevent that the tag gets overwritten.
+
+or by using regex:
+
+```bash
+go run main.go -image ubuntu -registry quay.io/fc/ -latest "xenial-\d.*"
+```
+
+## latest
+
+### nginx
+
+```bash
+go run main.go -image nginx -latest ".*(\d+\.){2}\d-alpine$"
+```
+
+### traefik
+
+```bash
+go run main.go -image traefik -latest "v(\d\.){2}\d"
+```
+
+### ubuntu
+
+```bash
+go run main.go -image ubuntu -latest "xenial-\d.*"
+```
+
+## preserve
+
+It it possible to preserve images from dockerhub in a private registry:
+
+```bash
+go run main.go -image ubuntu -registry quay.io/fc/ -latest "xenial-\d.*" -preserve
+```
