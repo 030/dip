@@ -34,7 +34,7 @@ applicable if it already exists to prevent that the tag gets overwritten.
 or by using regex:
 
 ```bash
-go run main.go -image ubuntu -registry quay.io/fc/ -latest "xenial-\d.*"
+go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*"
 ```
 
 ## latest
@@ -62,5 +62,5 @@ go run main.go -image ubuntu -latest "xenial-\d.*"
 It it possible to preserve images from dockerhub in a private registry:
 
 ```bash
-go run main.go -image ubuntu -registry quay.io/fc/ -latest "xenial-\d.*" -preserve
+go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*" -preserve
 ```
