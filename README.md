@@ -76,3 +76,12 @@ It it possible to preserve images from dockerhub in a private registry:
 ```bash
 go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*" -preserve
 ```
+
+## date
+
+Use ```-date``` to ensure that an image with security updates can be stored
+without having to worry that a tag will be overwritten.
+
+```bash
+go run main.go -image sonarqube -latest ".*-community$" -preserve -registry quay.io/some-org/ -date
+```
