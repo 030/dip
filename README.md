@@ -39,10 +39,22 @@ go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*"
 
 ## latest
 
+### nexus
+
+```bash
+go run main.go -image sonatype/nexus3 -latest "(\d+\.){2}\d"
+```
+
 ### nginx
 
 ```bash
 go run main.go -image nginx -latest ".*(\d+\.){2}\d-alpine$"
+```
+
+### sonarqube
+
+```bash
+go run main.go -image sonarqube -latest ".*-community$"
 ```
 
 ### traefik
