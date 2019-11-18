@@ -160,10 +160,10 @@ func main() {
 
 		cmd = "docker tag " + i + " " + *registry + d
 		log.Info(cmd)
-		// command(cmd)
+		command(cmd)
 
 		cmd = "docker push " + *registry + d
 		log.Info(cmd)
-		// command(cmd)
+		command(cmd)
 	}
 }
