@@ -8,6 +8,8 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
+	"time"
 
 	"github.com/buger/jsonparser"
 	log "github.com/sirupsen/logrus"
@@ -54,7 +56,13 @@ func absent(image, registry string) bool {
 
 // tags returns tag json formatted information from dockerhub
 func tags(image string) *http.Response {
-	resp, err := http.Get("https://registry.hub.docker.com/v2/repositories/library/" + image + "/tags?page_size=1024")
+	// if image does not contain a forward slash, the assumption is that it
+	// is a library
+	if !strings.Contains(image, "/") {
+		image = "library/" + image
+	}
+
+	resp, err := http.Get("https://registry.hub.docker.com/v2/repositories/" + image + "/tags?page_size=1024")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -97,6 +105,7 @@ func main() {
 	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
 	registry := flag.String("registry", "", "To what destination the image should be transferred, e.g. quay.io/some-org/. Note: do not omit the last forward slash.")
 	preserve := flag.Bool("preserve", false, "Whether an image from dockerhub should be stored in a private registry.")
+	date := flag.Bool("date", false, "Sometimes the version of an image gets overwritten by the community due to security updates. In order to store the latest image in a private registry, one could append a date.")
 
 	flag.Parse()
 
@@ -140,12 +149,21 @@ func main() {
 		log.Info(cmd)
 		command(cmd)
 
-		cmd = "docker tag " + i + " " + *registry + i
-		log.Info(cmd)
-		command(cmd)
+		// forward slashes are not allowed in some registries like quay.io,
+		// e.g. sonatype/nexus3:3.19.1 will become sonatype-nexus3:3.19.1
+		d := strings.Replace(i, "/", "-", -1)
 
-		cmd = "docker push " + *registry + i
+		if *date {
+			currentTime := time.Now()
+			d = d + "-" + currentTime.Format("20060102-150405")
+		}
+
+		cmd = "docker tag " + i + " " + *registry + d
 		log.Info(cmd)
-		command(cmd)
+		// command(cmd)
+
+		cmd = "docker push " + *registry + d
+		log.Info(cmd)
+		// command(cmd)
 	}
 }
