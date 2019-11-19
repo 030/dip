@@ -119,9 +119,17 @@ func main() {
 		fmt.Println(latestDetectedTag)
 	}
 
-	var i string
+	i := *image + latestDetectedTag
+	// forward slashes are not allowed in some registries like quay.io,
+	// e.g. sonatype/nexus3:3.19.1 will become sonatype-nexus3:3.19.1
+	i = strings.Replace(i, "/", "-", -1)
+
+	if *date {
+		currentTime := time.Now()
+		i = i + "-" + currentTime.Format("20060102-150405")
+	}
+
 	if *registry != "" {
-		i = *image + latestDetectedTag
 		dockerImageAbsent := absent(i, *registry)
 		if !dockerImageAbsent {
 			msg := "Docker image: " + i + " already exists in registry: " + *registry
@@ -149,21 +157,18 @@ func main() {
 		log.Info(cmd)
 		command(cmd)
 
-		// forward slashes are not allowed in some registries like quay.io,
-		// e.g. sonatype/nexus3:3.19.1 will become sonatype-nexus3:3.19.1
-		d := strings.Replace(i, "/", "-", -1)
-
-		if *date {
-			currentTime := time.Now()
-			d = d + "-" + currentTime.Format("20060102-150405")
+		cmd = "docker tag " + i + " " + *registry + i
+		log.Info(cmd)
+		err := command(cmd)
+		if err != nil {
+			log.Fatal(err)
 		}
 
-		cmd = "docker tag " + i + " " + *registry + d
+		cmd = "docker push " + *registry + i
 		log.Info(cmd)
-		command(cmd)
-
-		cmd = "docker push " + *registry + d
-		log.Info(cmd)
-		command(cmd)
+		err = command(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
