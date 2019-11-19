@@ -124,15 +124,18 @@ func main() {
 	// e.g. sonatype/nexus3:3.19.1 will become sonatype-nexus3:3.19.1
 	i = strings.Replace(i, "/", "-", -1)
 
+	var d string
 	if *date {
 		currentTime := time.Now()
-		i = i + "-" + currentTime.Format("20060102-150405")
+		d = i + "-" + currentTime.Format("20060102-150405")
+	} else {
+		d = i
 	}
 
 	if *registry != "" {
-		dockerImageAbsent := absent(i, *registry)
+		dockerImageAbsent := absent(d, *registry)
 		if !dockerImageAbsent {
-			msg := "Docker image: " + i + " already exists in registry: " + *registry
+			msg := "Docker image: " + d + " already exists in registry: " + *registry
 			if *preserve {
 				// Never return an exit1 if the aim is to preserve an image as
 				// the CI will become RED, while it should be green if an image
@@ -146,7 +149,7 @@ func main() {
 				log.Fatal(msg)
 			}
 		} else {
-			log.Info("Docker image: ", i, " does NOT exist in registry: ", *registry)
+			log.Info("Docker image: ", d, " does NOT exist in registry: ", *registry)
 		}
 	}
 
@@ -157,14 +160,14 @@ func main() {
 		log.Info(cmd)
 		command(cmd)
 
-		cmd = "docker tag " + i + " " + *registry + i
+		cmd = "docker tag " + i + " " + *registry + d
 		log.Info(cmd)
 		err := command(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		cmd = "docker push " + *registry + i
+		cmd = "docker push " + *registry + d
 		log.Info(cmd)
 		err = command(cmd)
 		if err != nil {
