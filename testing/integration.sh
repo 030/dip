@@ -5,8 +5,8 @@ registry(){
 }
 
 test(){
-    ./dip.exe -image sonatype/nexus3 -registry localhost:5000/ -latest "^(\d+\.){2}\d$" -preserve
-    ./dip.exe -image traefik -registry localhost:5000/ -latest "^v(\d+\.){1,2}\d+$" -preserve
+    ./dip -image sonatype/nexus3 -registry localhost:5000/ -latest "^(\d+\.){2}\d$" -preserve
+    ./dip -image traefik -registry localhost:5000/ -latest "^v(\d+\.){1,2}\d+$" -preserve
 }
 
 cleanup(){
