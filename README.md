@@ -60,7 +60,7 @@ go run main.go -image sonarqube -latest ".*-community$"
 ### traefik
 
 ```bash
-go run main.go -image traefik -latest "v(\d\.){2}\d"
+go run main.go -image traefik -latest "^v(\d+\.){1,2}\d+$"
 ```
 
 ### ubuntu
