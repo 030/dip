@@ -15,6 +15,7 @@ matrix:
   - os: windows
 script:
   - if [ $TRAVIS_OS_NAME == linux ]; then diff -u <(echo -n) <(gofmt -d ./); fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then ./testing/integration.sh; fi
   - export DELIVERABLE="dip-${TRAVIS_OS_NAME}"
   - go build -ldflags "-X dip/cmd.Version=${TRAVIS_TAG}" -o $DELIVERABLE
   - $SHA512_CMD $DELIVERABLE > ${DELIVERABLE}.sha512.txt
