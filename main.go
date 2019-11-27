@@ -156,11 +156,11 @@ func main() {
 	if *preserve {
 		var cmd string
 
-		cmd = "docker pull " + i
+		cmd = "docker pull " + *image + latestDetectedTag
 		log.Info(cmd)
 		command(cmd)
 
-		cmd = "docker tag " + i + " " + *registry + d
+		cmd = "docker tag " + *image + latestDetectedTag + " " + *registry + d
 		log.Info(cmd)
 		err := command(cmd)
 		if err != nil {
