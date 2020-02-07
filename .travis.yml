@@ -20,6 +20,7 @@ script:
   - $SHA512_CMD $DELIVERABLE > ${DELIVERABLE}.sha512.txt
   - chmod +x $DELIVERABLE
   - if [ $TRAVIS_OS_NAME == linux ]; then cp $DELIVERABLE dip && ./testing/integration.sh; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then bash <(curl -s https://codecov.io/bash); fi
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
