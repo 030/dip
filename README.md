@@ -39,6 +39,12 @@ go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*"
 
 ## latest
 
+### alpine
+
+```
+go run main.go -image alpine -latest "(\d+\.){2}\d"
+```
+
 ### nexus
 
 ```bash
