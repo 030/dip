@@ -8,10 +8,12 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
+	"github.com/hashicorp/go-version"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -83,20 +85,53 @@ func readResp(resp *http.Response) []byte {
 	return b
 }
 
+func sortedLatest(s []string) string {
+	versionsRaw := s
+
+	// Following snippet retrieved from
+	// https://github.com/hashicorp/go-version#version-sorting
+	versions := make([]*version.Version, len(versionsRaw))
+	for i, raw := range versionsRaw {
+		v, _ := version.NewVersion(raw)
+		versions[i] = v
+	}
+	sort.Sort(version.Collection(versions))
+
+	// Retrieve last element, see https://stackoverflow.com/a/22535888
+	latestVersion := versions[len(versions)-1]
+	return latestVersion.String()
+}
+
 // latestTag returns the latest tag of a docker image
-func latestTag(b []byte, t string) string {
+func latestTag(b []byte, t string) (string, error) {
 	var c string
 	var arr []string
-	jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		s, _ := jsonparser.GetString(value, "name")
-		a := fmt.Sprintf(`%s`, t)
-		re := regexp.MustCompile(a)
+
+	_, err := jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		key := "name"
+
+		s, _ := jsonparser.GetString(value, key)
+		if s == "" {
+			fmt.Printf("No value retrieved for key: '%s'", key)
+		}
+
+		re := regexp.MustCompile(t)
+
 		if re.FindString(s) != "" {
 			c = fmt.Sprintf("%v", re.FindString(s))
 			arr = append(arr, c)
 		}
 	}, "results")
-	return arr[0]
+
+	if err != nil {
+		return "", err
+	}
+
+	if len(arr) == 0 {
+		return "", fmt.Errorf("No versions were found. Check whether image exists in the registry")
+	}
+
+	return sortedLatest(arr), nil
 }
 
 func main() {
@@ -115,7 +150,12 @@ func main() {
 
 	var latestDetectedTag string
 	if *latest != "" {
-		latestDetectedTag = ":" + latestTag(readResp(tags(*image)), *latest)
+		l, err := latestTag(readResp(tags(*image)), *latest)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		latestDetectedTag = ":" + l
 		fmt.Println(latestDetectedTag)
 	}
 
@@ -158,11 +198,14 @@ func main() {
 
 		cmd = "docker pull " + *image + latestDetectedTag
 		log.Info(cmd)
-		command(cmd)
+		err := command(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		cmd = "docker tag " + *image + latestDetectedTag + " " + *registry + d
 		log.Info(cmd)
-		err := command(cmd)
+		err = command(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
