@@ -54,7 +54,7 @@ go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*"
 
 ### alpine
 
-```
+```bash
 go run main.go -image alpine -latest "(\d+\.){2}\d"
 ```
 
