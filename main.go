@@ -106,10 +106,17 @@ func sortedLatest(s []string) string {
 func latestTag(b []byte, t string) (string, error) {
 	var c string
 	var arr []string
+
 	_, err := jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		s, _ := jsonparser.GetString(value, "name")
-		a := fmt.Sprintf(`%s`, t)
-		re := regexp.MustCompile(a)
+		key := "name"
+
+		s, _ := jsonparser.GetString(value, key)
+		if s == "" {
+			fmt.Printf("No value retrieved for key: '%s'", key)
+		}
+
+		re := regexp.MustCompile(t)
+
 		if re.FindString(s) != "" {
 			c = fmt.Sprintf("%v", re.FindString(s))
 			arr = append(arr, c)
@@ -118,6 +125,10 @@ func latestTag(b []byte, t string) (string, error) {
 
 	if err != nil {
 		return "", err
+	}
+
+	if len(arr) == 0 {
+		return "", fmt.Errorf("No versions were found. Check whether image exists in the registry")
 	}
 
 	return sortedLatest(arr), nil
