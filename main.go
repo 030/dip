@@ -65,7 +65,7 @@ func tags(image string) ([]string, error) {
 
 		s, _ := jsonparser.GetString(value, key)
 		if s == "" {
-			log.Warning("No value retrieved for key: '%s'", key)
+			log.Warning("No value retrieved for key: '" + key + "'")
 		}
 
 		arr = append(arr, s)
