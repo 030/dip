@@ -25,7 +25,7 @@ func command(s string) error {
 	log.Info(outString)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot run: '%s'. Error: '%s', %v", s, outString, err)
 	}
 	return nil
 }
