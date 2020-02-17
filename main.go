@@ -25,9 +25,65 @@ func command(s string) error {
 	log.Info(outString)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot run: '%s'. Error: '%s', %v", s, outString, err)
 	}
 	return nil
+}
+
+// tags returns tag json formatted information from dockerhub
+func tags(image string) ([]string, error) {
+	// if image does not contain a forward slash, the assumption is that it
+	// is a library
+	log.Debug("Checking whether image: '" + image + "' is a library")
+	if !strings.Contains(image, "/") {
+		log.Debug("Image: '" + image + "' is a library. Concatenating 'library/'...")
+		image = "library/" + image
+	}
+
+	log.Debug("Getting raw tag information on dockerhub for image: '" + image + "'")
+
+	// get url
+	resp, err := http.Get("https://registry.hub.docker.com/v2/repositories/" + image + "/tags?page_size=1024")
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// read body into bytes
+	var b []byte
+	if resp.StatusCode == http.StatusOK {
+		log.Debug("Dockerhub api call Ok. Reading body as []byte")
+		b, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// get tags and return them as a slice
+	// var c string
+	var arr []string
+	_, err = jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+
+		key := "name"
+
+		s, _ := jsonparser.GetString(value, key)
+		if s == "" {
+			log.Warning("No value retrieved for key: '" + key + "'")
+		}
+
+		arr = append(arr, s)
+		log.Debug(arr)
+
+	}, "results")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(arr) == 0 {
+		return nil, fmt.Errorf("No versions were found. Check whether image '" + image + "' exists in the registry")
+	}
+	return arr, nil
 }
 
 // absent checks whether a specific docker image is absent
@@ -56,86 +112,55 @@ func absent(image, registry string) bool {
 	return false
 }
 
-// tags returns tag json formatted information from dockerhub
-func tags(image string) *http.Response {
-	// if image does not contain a forward slash, the assumption is that it
-	// is a library
-	if !strings.Contains(image, "/") {
-		image = "library/" + image
-	}
-
-	resp, err := http.Get("https://registry.hub.docker.com/v2/repositories/" + image + "/tags?page_size=1024")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return resp
-}
-
-// readResp reads a http response and returns it as byte
-func readResp(resp *http.Response) []byte {
-	defer resp.Body.Close()
-	var b []byte
-	var err error
-	if resp.StatusCode == http.StatusOK {
-		b, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	return b
-}
-
-func sortedLatest(s []string) string {
-	versionsRaw := s
-
-	// Following snippet retrieved from
-	// https://github.com/hashicorp/go-version#version-sorting
-	versions := make([]*version.Version, len(versionsRaw))
-	for i, raw := range versionsRaw {
-		v, _ := version.NewVersion(raw)
-		versions[i] = v
-	}
-	sort.Sort(version.Collection(versions))
-
-	// Retrieve last element, see https://stackoverflow.com/a/22535888
-	latestVersion := versions[len(versions)-1]
-	return latestVersion.String()
-}
-
 // latestTag returns the latest tag of a docker image
-func latestTag(b []byte, t string) (string, error) {
+func latestTag(s []string, t string, z bool) (string, error) {
+	log.Info("Get all tags that match regex: '", t, "'")
 	var c string
 	var arr []string
 
-	_, err := jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		key := "name"
-
-		s, _ := jsonparser.GetString(value, key)
-		if s == "" {
-			fmt.Printf("No value retrieved for key: '%s'", key)
-		}
-
-		re := regexp.MustCompile(t)
-
-		if re.FindString(s) != "" {
-			c = fmt.Sprintf("%v", re.FindString(s))
+	re := regexp.MustCompile(t)
+	for _, x := range s {
+		if re.FindString(x) != "" {
+			c = fmt.Sprintf("%v", re.FindString(x))
+			log.Debug(c)
 			arr = append(arr, c)
+			log.Debug(arr)
 		}
-	}, "results")
-
-	if err != nil {
-		return "", err
 	}
 
 	if len(arr) == 0 {
-		return "", fmt.Errorf("No versions were found. Check whether image exists in the registry")
+		return "", fmt.Errorf("None of the tags: %v match regex: %s", s, t)
 	}
 
-	return sortedLatest(arr), nil
+	var versions []*version.Version
+	var latestVersionString string
+	if z {
+		log.Debug("Raw slice latestTag: ", arr)
+		// Following snippet retrieved from
+		// https://github.com/hashicorp/go-version#version-sorting
+		versions = make([]*version.Version, len(arr))
+		for i, raw := range arr {
+			v, _ := version.NewVersion(raw)
+			versions[i] = v
+		}
+
+		sort.Sort(version.Collection(versions))
+		log.Debug("Sorted slice latestTag: ", versions)
+		// Retrieve last element, see https://stackoverflow.com/a/22535888
+		latestVersion := versions[len(versions)-1]
+		latestVersionString = latestVersion.String()
+	} else {
+		sort.Strings(arr)
+		log.Debug("Sorted slice:", arr)
+		latestVersionString = arr[len(arr)-1]
+	}
+
+	return latestVersionString, nil
 }
 
 func main() {
 	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
+	semantic := flag.Bool("semantic", true, "Whether the tags are semantic.")
 	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
 	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
 	registry := flag.String("registry", "", "To what destination the image should be transferred, e.g. quay.io/some-org/. Note: do not omit the last forward slash.")
@@ -148,9 +173,25 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	log.WithFields(log.Fields{
+		"debug":    *debug,
+		"semantic": *semantic,
+		"image":    *image,
+		"latest":   *latest,
+		"registry": *registry,
+		"preserve": *preserve,
+		"date":     *date,
+	}).Debug("Docker Image Patrol (DIP) command line arguments:")
+
 	var latestDetectedTag string
 	if *latest != "" {
-		l, err := latestTag(readResp(tags(*image)), *latest)
+
+		t, err := tags(*image)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		l, err := latestTag(t, *latest, *semantic)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -180,7 +221,7 @@ func main() {
 				// Never return an exit1 if the aim is to preserve an image as
 				// the CI will become RED, while it should be green if an image
 				// is already present
-				log.Info(msg)
+				log.Debug(msg)
 				os.Exit(0)
 			} else {
 				// Return an Exit1 if an image already exists to prevent that
