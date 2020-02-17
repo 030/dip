@@ -85,7 +85,7 @@ go run main.go -image traefik -latest "^v(\d+\.){1,2}\d+$"
 ### ubuntu
 
 ```bash
-go run main.go -image ubuntu -latest "xenial-\d.*"
+go run main.go -image ubuntu -latest "^xenial.*" -semantic=false -debug=true
 ```
 
 ## preserve

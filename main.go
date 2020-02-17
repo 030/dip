@@ -1,13 +1,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"os/exec"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/buger/jsonparser"
 	"github.com/hashicorp/go-version"
@@ -33,7 +36,7 @@ func tags(image string) ([]string, error) {
 	// is a library
 	log.Debug("Checking whether image: '" + image + "' is a library")
 	if !strings.Contains(image, "/") {
-		log.Info("Image: '" + image + "' is a library. Concatenating 'library/'...")
+		log.Debug("Image: '" + image + "' is a library. Concatenating 'library/'...")
 		image = "library/" + image
 	}
 
@@ -119,9 +122,9 @@ func latestTag(s []string, t string, z bool) (string, error) {
 	for _, x := range s {
 		if re.FindString(x) != "" {
 			c = fmt.Sprintf("%v", re.FindString(x))
-			log.Info(c)
+			log.Debug(c)
 			arr = append(arr, c)
-			log.Info(arr)
+			log.Debug(arr)
 		}
 	}
 
@@ -132,7 +135,7 @@ func latestTag(s []string, t string, z bool) (string, error) {
 	var versions []*version.Version
 	var latestVersionString string
 	if z {
-		log.Info("Raw slice latestTag: ", arr)
+		log.Debug("Raw slice latestTag: ", arr)
 		// Following snippet retrieved from
 		// https://github.com/hashicorp/go-version#version-sorting
 		versions = make([]*version.Version, len(arr))
@@ -142,102 +145,117 @@ func latestTag(s []string, t string, z bool) (string, error) {
 		}
 
 		sort.Sort(version.Collection(versions))
-		log.Info("Sorted slice latestTag: ", versions)
+		log.Debug("Sorted slice latestTag: ", versions)
 		// Retrieve last element, see https://stackoverflow.com/a/22535888
 		latestVersion := versions[len(versions)-1]
 		latestVersionString = latestVersion.String()
 	} else {
 		sort.Strings(arr)
-		log.Info("Sorted slice:", arr)
+		log.Debug("Sorted slice:", arr)
 		latestVersionString = arr[len(arr)-1]
 	}
 
 	return latestVersionString, nil
 }
 
-//ADD SEMANTIC OPTION!
+func main() {
+	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
+	semantic := flag.Bool("semantic", true, "Whether the tags are semantic.")
+	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
+	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
+	registry := flag.String("registry", "", "To what destination the image should be transferred, e.g. quay.io/some-org/. Note: do not omit the last forward slash.")
+	preserve := flag.Bool("preserve", false, "Whether an image from dockerhub should be stored in a private registry.")
+	date := flag.Bool("date", false, "Sometimes the version of an image gets overwritten by the community due to security updates. In order to store the latest image in a private registry, one could append a date.")
 
-// func main() {
-// 	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
-// 	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
-// 	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
-// 	registry := flag.String("registry", "", "To what destination the image should be transferred, e.g. quay.io/some-org/. Note: do not omit the last forward slash.")
-// 	preserve := flag.Bool("preserve", false, "Whether an image from dockerhub should be stored in a private registry.")
-// 	date := flag.Bool("date", false, "Sometimes the version of an image gets overwritten by the community due to security updates. In order to store the latest image in a private registry, one could append a date.")
+	flag.Parse()
 
-// 	flag.Parse()
+	if *debug {
+		log.SetLevel(log.DebugLevel)
+	}
 
-// 	if *debug {
-// 		log.SetLevel(log.DebugLevel)
-// 	}
+	log.WithFields(log.Fields{
+		"debug":    *debug,
+		"semantic": *semantic,
+		"image":    *image,
+		"latest":   *latest,
+		"registry": *registry,
+		"preserve": *preserve,
+		"date":     *date,
+	}).Debug("Docker Image Patrol (DIP) command line arguments:")
 
-// 	var latestDetectedTag string
-// 	if *latest != "" {
-// 		l, err := latestTag(readResp(tags(*image)), *latest)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
+	var latestDetectedTag string
+	if *latest != "" {
 
-// 		latestDetectedTag = ":" + l
-// 		fmt.Println(latestDetectedTag)
-// 	}
+		t, err := tags(*image)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-// 	i := *image + latestDetectedTag
-// 	// forward slashes are not allowed in some registries like quay.io,
-// 	// e.g. sonatype/nexus3:3.19.1 will become sonatype-nexus3:3.19.1
-// 	i = strings.Replace(i, "/", "-", -1)
+		l, err := latestTag(t, *latest, *semantic)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-// 	var d string
-// 	if *date {
-// 		currentTime := time.Now()
-// 		d = i + "-" + currentTime.Format("20060102-150405")
-// 	} else {
-// 		d = i
-// 	}
+		latestDetectedTag = ":" + l
+		fmt.Println(latestDetectedTag)
+	}
 
-// 	if *registry != "" {
-// 		dockerImageAbsent := absent(d, *registry)
-// 		if !dockerImageAbsent {
-// 			msg := "Docker image: " + d + " already exists in registry: " + *registry
-// 			if *preserve {
-// 				// Never return an exit1 if the aim is to preserve an image as
-// 				// the CI will become RED, while it should be green if an image
-// 				// is already present
-// 				log.Info(msg)
-// 				os.Exit(0)
-// 			} else {
-// 				// Return an Exit1 if an image already exists to prevent that
-// 				// it gets overwritten if tagImmutability is absent in a
-// 				// docker registry
-// 				log.Fatal(msg)
-// 			}
-// 		} else {
-// 			log.Info("Docker image: ", d, " does NOT exist in registry: ", *registry)
-// 		}
-// 	}
+	i := *image + latestDetectedTag
+	// forward slashes are not allowed in some registries like quay.io,
+	// e.g. sonatype/nexus3:3.19.1 will become sonatype-nexus3:3.19.1
+	i = strings.Replace(i, "/", "-", -1)
 
-// 	if *preserve {
-// 		var cmd string
+	var d string
+	if *date {
+		currentTime := time.Now()
+		d = i + "-" + currentTime.Format("20060102-150405")
+	} else {
+		d = i
+	}
 
-// 		cmd = "docker pull " + *image + latestDetectedTag
-// 		log.Info(cmd)
-// 		err := command(cmd)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
+	if *registry != "" {
+		dockerImageAbsent := absent(d, *registry)
+		if !dockerImageAbsent {
+			msg := "Docker image: " + d + " already exists in registry: " + *registry
+			if *preserve {
+				// Never return an exit1 if the aim is to preserve an image as
+				// the CI will become RED, while it should be green if an image
+				// is already present
+				log.Debug(msg)
+				os.Exit(0)
+			} else {
+				// Return an Exit1 if an image already exists to prevent that
+				// it gets overwritten if tagImmutability is absent in a
+				// docker registry
+				log.Fatal(msg)
+			}
+		} else {
+			log.Info("Docker image: ", d, " does NOT exist in registry: ", *registry)
+		}
+	}
 
-// 		cmd = "docker tag " + *image + latestDetectedTag + " " + *registry + d
-// 		log.Info(cmd)
-// 		err = command(cmd)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
+	if *preserve {
+		var cmd string
 
-// 		cmd = "docker push " + *registry + d
-// 		log.Info(cmd)
-// 		err = command(cmd)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 	}
-// }
+		cmd = "docker pull " + *image + latestDetectedTag
+		log.Info(cmd)
+		err := command(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cmd = "docker tag " + *image + latestDetectedTag + " " + *registry + d
+		log.Info(cmd)
+		err = command(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cmd = "docker push " + *registry + d
+		log.Info(cmd)
+		err = command(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
