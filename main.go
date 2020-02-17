@@ -109,68 +109,53 @@ func absent(image, registry string) bool {
 	return false
 }
 
-// readResp reads a http response and returns it as byte
-func readResp(resp *http.Response) []byte {
-	defer resp.Body.Close()
-	var b []byte
-	var err error
-	if resp.StatusCode == http.StatusOK {
-		b, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	return b
-}
-
-func sortedLatest(s []string) string {
-	versionsRaw := s
-
-	// Following snippet retrieved from
-	// https://github.com/hashicorp/go-version#version-sorting
-	versions := make([]*version.Version, len(versionsRaw))
-	for i, raw := range versionsRaw {
-		v, _ := version.NewVersion(raw)
-		versions[i] = v
-	}
-	sort.Sort(version.Collection(versions))
-
-	// Retrieve last element, see https://stackoverflow.com/a/22535888
-	latestVersion := versions[len(versions)-1]
-	return latestVersion.String()
-}
-
 // latestTag returns the latest tag of a docker image
-func latestTag(b []byte, t string) (string, error) {
+func latestTag(s []string, t string, z bool) (string, error) {
+	log.Info("Get all tags that match regex: '", t, "'")
 	var c string
 	var arr []string
 
-	_, err := jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		key := "name"
-
-		s, _ := jsonparser.GetString(value, key)
-		if s == "" {
-			fmt.Printf("No value retrieved for key: '%s'", key)
-		}
-
-		re := regexp.MustCompile(t)
-
-		if re.FindString(s) != "" {
-			c = fmt.Sprintf("%v", re.FindString(s))
+	re := regexp.MustCompile(t)
+	for _, x := range s {
+		if re.FindString(x) != "" {
+			c = fmt.Sprintf("%v", re.FindString(x))
+			log.Info(c)
 			arr = append(arr, c)
+			log.Info(arr)
 		}
-	}, "results")
-
-	if err != nil {
-		return "", err
 	}
 
 	if len(arr) == 0 {
-		return "", fmt.Errorf("No versions were found. Check whether image exists in the registry")
+		return "", fmt.Errorf("None of the tags: %v match regex: %s", s, t)
 	}
 
-	return sortedLatest(arr), nil
+	var versions []*version.Version
+	var latestVersionString string
+	if z {
+		log.Info("Raw slice latestTag: ", arr)
+		// Following snippet retrieved from
+		// https://github.com/hashicorp/go-version#version-sorting
+		versions = make([]*version.Version, len(arr))
+		for i, raw := range arr {
+			v, _ := version.NewVersion(raw)
+			versions[i] = v
+		}
+
+		sort.Sort(version.Collection(versions))
+		log.Info("Sorted slice latestTag: ", versions)
+		// Retrieve last element, see https://stackoverflow.com/a/22535888
+		latestVersion := versions[len(versions)-1]
+		latestVersionString = latestVersion.String()
+	} else {
+		sort.Strings(arr)
+		log.Info("Sorted slice:", arr)
+		latestVersionString = arr[len(arr)-1]
+	}
+
+	return latestVersionString, nil
 }
+
+//ADD SEMANTIC OPTION!
 
 // func main() {
 // 	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")

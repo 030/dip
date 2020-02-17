@@ -35,3 +35,36 @@ func TestTags(t *testing.T) {
 		t.Errorf("Want '%v', got '%v'", want, err)
 	}
 }
+
+func TestLatestTags(t *testing.T) {
+	tagsSemantic := []string{"3.0.0", "1.1.0", "1.1.42", "2.0.0", "1.0.0"}
+	tagsNonSemantic := []string{"19.04", "19.100", "20.04", "42.08", "19.10"}
+
+	// happy - semantic
+	got, _ := latestTag(tagsSemantic, "^1.1.*", true)
+	want := "1.1.42"
+	if got != want {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+
+	// happy - non-semantic
+	got, _ = latestTag(tagsNonSemantic, "^19.*", false)
+	want = "19.100"
+	if got != want {
+		t.Errorf("Got %v, want %v", got, want)
+	}
+
+	// unhappy - semantic
+	_, err := latestTag(tagsSemantic, "^9.*", true)
+	want = "None of the tags: [3.0.0 1.1.0 1.1.42 2.0.0 1.0.0] match regex: ^9.*"
+	if want != err.Error() {
+		t.Errorf("Want '%v', got '%v'", want, err)
+	}
+
+	// unhappy - non-semantic
+	_, err = latestTag(tagsNonSemantic, "^9.*", false)
+	want = "None of the tags: [19.04 19.100 20.04 42.08 19.10] match regex: ^9.*"
+	if want != err.Error() {
+		t.Errorf("Want '%v', got '%v'", want, err)
+	}
+}
