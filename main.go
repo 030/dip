@@ -114,7 +114,7 @@ func absent(image, registry string) bool {
 
 // latestTag returns the latest tag of a docker image
 func latestTag(s []string, t string, z bool) (string, error) {
-	log.Info("Get all tags that match regex: '", t, "'")
+	log.Debug("Getting all tags that match regex: '", t, "'")
 	var c string
 	var arr []string
 
@@ -230,7 +230,7 @@ func main() {
 				log.Fatal(msg)
 			}
 		} else {
-			log.Info("Docker image: ", d, " does NOT exist in registry: ", *registry)
+			log.Warning("Docker image: ", d, " does NOT exist in registry: ", *registry)
 		}
 	}
 
