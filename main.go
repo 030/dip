@@ -17,6 +17,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// https://stackoverflow.com/a/11355611/2777965
+var ver string
+
 func command(s string) error {
 	out, err := exec.Command("bash", "-c", s).CombinedOutput()
 	outString := string(out)
@@ -159,6 +162,7 @@ func latestTag(s []string, t string, z bool) (string, error) {
 }
 
 func main() {
+	version := flag.Bool("version", false, "Return the version of the tool.")
 	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
 	semantic := flag.Bool("semantic", true, "Whether the tags are semantic.")
 	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
@@ -168,6 +172,10 @@ func main() {
 	date := flag.Bool("date", false, "Sometimes the version of an image gets overwritten by the community due to security updates. In order to store the latest image in a private registry, one could append a date.")
 
 	flag.Parse()
+
+	if *version {
+		fmt.Println("dip version " + ver)
+	}
 
 	if *debug {
 		log.SetLevel(log.DebugLevel)
