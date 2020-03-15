@@ -19,6 +19,8 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/030/dip?branch=master)](https://bettercodehub.com/results/030/dip)
 [![Chocolatey](https://img.shields.io/chocolatey/dt/dip)](https://chocolatey.org/packages/dip)
 
+<a href="https://dip.releasesoftwaremoreoften.com"><img src="https://github.com/030/dip/raw/master/logo/logo.png" width="100"></a>
+
 Docker Image Patrol (DIP) keeps docker images up-to-date.
 
 ## Usage
