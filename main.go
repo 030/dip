@@ -285,9 +285,9 @@ func boo(s string, page int) error {
 
 	hihi = append(hihi, bladibla(resp.Bytes())...)
 	if gjson.GetBytes(resp.Bytes(), "next").String() != "" {
-		fmt.Println(gjson.GetBytes(resp.Bytes(), "next"))
+		log.Debug(gjson.GetBytes(resp.Bytes(), "next"))
+		log.Debug(page)
 		page++
-		fmt.Println(page)
 		if err := boo(s, page); err != nil {
 			return err
 		}
@@ -305,10 +305,28 @@ func bladibla(b []byte) []string {
 }
 
 func main() {
-	if err := boo("library/tomcat", 1); err != nil {
+	if err := boo("library/golang", 1); err != nil {
+		// if err := boo("library/alpine", 1); err != nil {
+		// if err := boo("library/tomcat", 1); err != nil {
 		log.Fatal(err)
 	}
-	sort.Sort(sort.StringSlice(hihi))
-	fmt.Println(hihi)
-	fmt.Println(len(hihi))
+	log.Debug(hihi)
+	log.Debug(len(hihi))
+
+	r, err := regexp.Compile("([0-9]+\\.){2}[0-9]+.*alpine.*")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var s string
+	for _, tag := range hihi {
+		if r.MatchString(tag) {
+			s = r.FindString(tag)
+			break
+		}
+	}
+	if s == "" {
+		log.Fatal("No tag found. Check whether regex is correct")
+	}
+	fmt.Println(s)
 }
