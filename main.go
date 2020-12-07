@@ -9,12 +9,15 @@ import (
 	"os/exec"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
 	"github.com/hashicorp/go-version"
+	"github.com/levigross/grequests"
 	log "github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
 )
 
 // https://stackoverflow.com/a/11355611/2777965
@@ -161,7 +164,7 @@ func latestTag(s []string, t string, z bool) (string, error) {
 	return latestVersionString, nil
 }
 
-func main() {
+func main2() {
 	version := flag.Bool("version", false, "Return the version of the tool.")
 	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
 	semantic := flag.Bool("semantic", true, "Whether the tags are semantic.")
@@ -266,4 +269,46 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+}
+
+var hihi = []string{}
+
+func boo(s string, page int) error {
+	resp, err := grequests.Get("https://registry.hub.docker.com/v2/repositories/"+s+"/tags?page="+strconv.Itoa(page)+"&page_size=100", nil)
+	if err != nil {
+		return err
+	}
+	httpStatusCode := resp.StatusCode
+	if httpStatusCode != http.StatusOK {
+		return fmt.Errorf("ResponseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub", httpStatusCode, s)
+	}
+
+	hihi = append(hihi, bladibla(resp.Bytes())...)
+	if gjson.GetBytes(resp.Bytes(), "next").String() != "" {
+		fmt.Println(gjson.GetBytes(resp.Bytes(), "next"))
+		page++
+		fmt.Println(page)
+		if err := boo(s, page); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func bladibla(b []byte) []string {
+	tags := gjson.GetBytes(b, "results.#.name").Array()
+	boo := []string{}
+	for _, tag := range tags {
+		boo = append(boo, tag.String())
+	}
+	return boo
+}
+
+func main() {
+	if err := boo("library/tomcat", 1); err != nil {
+		log.Fatal(err)
+	}
+	sort.Sort(sort.StringSlice(hihi))
+	fmt.Println(hihi)
+	fmt.Println(len(hihi))
 }
