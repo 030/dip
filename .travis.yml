@@ -22,7 +22,6 @@ script:
   - go build -ldflags "-X main.ver=${TRAVIS_TAG}" -o $DELIVERABLE
   - $SHA512_CMD $DELIVERABLE > ${DELIVERABLE}.sha512.txt
   - chmod +x $DELIVERABLE
-  - if [ $TRAVIS_OS_NAME == linux ]; then cp $DELIVERABLE dip && ./testing/integration.sh; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then bash <(curl -s https://codecov.io/bash); fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ -n "${TRAVIS_TAG}" ]; then cp $DELIVERABLE dip && a2deb -app dip -version ${TRAVIS_TAG} -maintainer "030 <chocolatey030@gmail.com>" -description "Docker Image Patrol"; fi
 deploy:
