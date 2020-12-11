@@ -84,6 +84,14 @@ go run main.go -image library/ubuntu -latest "^xenial.*"
 
 ## dockerfile
 
+### golang
+
 ```bash
 go run main.go -image=library/golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile
+```
+
+### adoptopenjdk
+
+```bash
+go run main.go -image=library/adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile
 ```
