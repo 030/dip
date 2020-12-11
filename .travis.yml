@@ -1,18 +1,18 @@
 language: go
 go:
-  - 1.14.2
+  - 1.15.6
 env:
   global:
     - SHA512_CMD=sha512sum
     - GO111MODULE=on
 matrix:
   include:
-  - os: linux
-    dist: bionic
-  - os: osx
-    env:
-      - SHA512_CMD="shasum -a 512"
-  - os: windows
+    - os: linux
+      dist: bionic
+    - os: osx
+      env:
+        - SHA512_CMD="shasum -a 512"
+    - os: windows
 before_script:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then curl -L https://github.com/030/a2deb/releases/download/1.0.0/a2deb_1.0.0-0.deb -o a2deb.deb && sudo apt update -y && sudo apt-get -y install ./a2deb.deb bats; fi
 script:
