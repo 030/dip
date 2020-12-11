@@ -29,6 +29,8 @@ Docker Image Patrol (DIP) keeps docker images up-to-date.
 Usage of dip:
   -debug
         Whether debug mode should be enabled.
+  -dockerfile
+        Whether dockerfile should be checked.
   -image string
         Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.
   -latest string
@@ -78,4 +80,10 @@ go run main.go -image library/traefik -latest "^v(\d+\.){1,2}\d+$"
 
 ```bash
 go run main.go -image library/ubuntu -latest "^xenial.*"
+```
+
+## dockerfile
+
+```bash
+go run main.go -image=library/golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile
 ```
