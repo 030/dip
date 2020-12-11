@@ -85,8 +85,8 @@ func main() {
 		return
 	}
 
-	log.SetReportCaller(true)
 	if *debug {
+		log.SetReportCaller(true)
 		log.SetLevel(log.DebugLevel)
 	}
 
@@ -111,7 +111,7 @@ func main() {
 	if s == "" {
 		log.Fatal("No tag found. Check whether regex is correct")
 	}
-	log.Infof("Latest tag: '%s' found for image: '%s'", s, *image)
+	log.Debugf("Latest tag: '%s' found for image: '%s'", s, *image)
 
 	if *dockerfile {
 		dft, err := dockerfileTag(*image)
@@ -119,7 +119,7 @@ func main() {
 			log.Fatal(err)
 		}
 		if s != dft {
-			log.Fatalf("Dockerfile tag: '%s' seems to be outdated: '%s'", dft, s)
+			log.Fatalf("Dockerfile tag: '%s' seems to be outdated: '%s'. Please update the tag in the Dockerfile", dft, s)
 		} else {
 			log.Infof("Dockerfile tag: '%s' is up to date. Latest: '%v'", dft, s)
 		}
