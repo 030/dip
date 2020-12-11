@@ -28,29 +28,12 @@ Docker Image Patrol (DIP) keeps docker images up-to-date.
 ```bash
 Usage of dip:
   -debug
-        Whether debug mode should be enabled
+        Whether debug mode should be enabled.
   -image string
-        The origin of the image, e.g. nginx:1.17.5-alpine
-  -registry string
-        To what destination the image should be transferred, e.g. quay.io/some-org
+        Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.
+  -latest string
+        The regex to get the latest tag, e.g. "xenial-\d.*".
 exit status 2
-```
-
-### Absent
-
-Check whether a docker-image resides in a docker-registry:
-
-```bash
-dip -image nginx:1.17.5-alpine -registry quay.io/some-org/
-```
-
-An ```exit 0``` will be returned if the image is absent and an ```exit 1``` is
-applicable if it already exists to prevent that the tag gets overwritten.
-
-or by using regex:
-
-```bash
-go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*"
 ```
 
 ## latest
@@ -58,7 +41,13 @@ go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*"
 ### alpine
 
 ```bash
-go run main.go -image alpine -latest "(\d+\.){2}\d"
+go run main.go -image library/alpine -latest "(\d+\.){2}\d"
+```
+
+### minio
+
+```bash
+go run main.go -image minio/minio -latest "RELEASE\.2019.*"
 ```
 
 ### nexus
@@ -70,40 +59,23 @@ go run main.go -image sonatype/nexus3 -latest "(\d+\.){2}\d"
 ### nginx
 
 ```bash
-go run main.go -image nginx -latest ".*(\d+\.){2}\d-alpine$"
+go run main.go -image library/nginx -latest ".*(\d+\.){2}\d-alpine$"
 ```
 
 ### sonarqube
 
 ```bash
-go run main.go -image sonarqube -latest ".*-community$"
+go run main.go -image library/sonarqube -latest ".*-community$"
 ```
 
 ### traefik
 
 ```bash
-go run main.go -image traefik -latest "^v(\d+\.){1,2}\d+$"
+go run main.go -image library/traefik -latest "^v(\d+\.){1,2}\d+$"
 ```
 
 ### ubuntu
 
 ```bash
-go run main.go -image ubuntu -latest "^xenial.*" -semantic=false -debug=true
-```
-
-## preserve
-
-It it possible to preserve images from dockerhub in a private registry:
-
-```bash
-go run main.go -image ubuntu -registry quay.io/some-org/ -latest "xenial-\d.*" -preserve
-```
-
-## date
-
-Use ```-date``` to ensure that an image with security updates can be stored
-without having to worry that a tag will be overwritten.
-
-```bash
-go run main.go -image sonarqube -latest ".*-community$" -preserve -registry quay.io/some-org/ -date
+go run main.go -image library/ubuntu -latest "^xenial.*"
 ```
