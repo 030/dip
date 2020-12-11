@@ -16,6 +16,7 @@ import (
 const dockerRegistry = "https://registry.hub.docker.com/v2/repositories/"
 
 var tags = []string{}
+var ver string
 
 func allTags(image string, page int) error {
 	resp, err := grequests.Get(dockerRegistry+image+"/tags?page="+strconv.Itoa(page)+"&page_size=100", nil)
@@ -70,12 +71,18 @@ func main() {
 	dockerfile := flag.Bool("dockerfile", false, "Whether dockerfile should be checked.")
 	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
 	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
+	version := flag.Bool("version", false, "The version of DIP.")
 
 	flag.Parse()
 
-	if *image == "" || *latest == "" {
+	if (*image == "" || *latest == "") && !*version {
 		flag.Usage()
 		log.Fatal("image and latest subcommands are mandatory")
+	}
+
+	if *version {
+		fmt.Println(ver)
+		return
 	}
 
 	log.SetReportCaller(true)
