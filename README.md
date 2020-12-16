@@ -89,6 +89,10 @@ Usage of ./dip:
 
 ## dockerfile
 
+Use `-dockerfile` to check whether the image that is defined in the `FROM`
+should be updated. If the command is run in the Continuous Integration (CI),
+the pipeline will fail as an exit 1 is returned if an image is outdated.
+
 ### golang
 
 ```bash
