@@ -26,7 +26,7 @@ Docker Image Patrol (DIP) keeps docker images up-to-date.
 ## Usage
 
 ```bash
-Usage of dip:
+Usage of ./dip:
   -debug
         Whether debug mode should be enabled.
   -dockerfile
@@ -35,7 +35,10 @@ Usage of dip:
         Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.
   -latest string
         The regex to get the latest tag, e.g. "xenial-\d.*".
-exit status 2
+  -official
+        Use this parameter if an image is official according to dockerhub.
+  -version
+        The version of DIP.
 ```
 
 ## latest
@@ -43,43 +46,43 @@ exit status 2
 ### alpine
 
 ```bash
-go run main.go -image library/alpine -latest "(\d+\.){2}\d"
+./dip -image alpine -latest "(\d+\.){2}\d" --official
 ```
 
 ### minio
 
 ```bash
-go run main.go -image minio/minio -latest "RELEASE\.2019.*"
+./dip -image minio/minio -latest "RELEASE\.2019.*"
 ```
 
 ### nexus
 
 ```bash
-go run main.go -image sonatype/nexus3 -latest "(\d+\.){2}\d"
+./dip -image sonatype/nexus3 -latest "(\d+\.){2}\d"
 ```
 
 ### nginx
 
 ```bash
-go run main.go -image library/nginx -latest ".*(\d+\.){2}\d-alpine$"
+./dip -image nginx -latest ".*(\d+\.){2}\d-alpine$"
 ```
 
 ### sonarqube
 
 ```bash
-go run main.go -image library/sonarqube -latest ".*-community$"
+./dip -image sonarqube -latest ".*-community$"
 ```
 
 ### traefik
 
 ```bash
-go run main.go -image library/traefik -latest "^v(\d+\.){1,2}\d+$"
+./dip --image=traefik --latest="^v(\d+\.){1,2}\d+$" --official
 ```
 
 ### ubuntu
 
 ```bash
-go run main.go -image library/ubuntu -latest "^xenial.*"
+./dip -image ubuntu -latest "^xenial.*"
 ```
 
 ## dockerfile
@@ -87,11 +90,11 @@ go run main.go -image library/ubuntu -latest "^xenial.*"
 ### golang
 
 ```bash
-go run main.go -image=library/golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile
+./dip -image=library/golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile -official
 ```
 
 ### adoptopenjdk
 
 ```bash
-go run main.go -image=library/adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile
+./dip -image=library/adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile
 ```

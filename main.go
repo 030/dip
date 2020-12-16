@@ -25,7 +25,7 @@ func allTags(image string, page int) error {
 	}
 	httpStatusCode := resp.StatusCode
 	if httpStatusCode != http.StatusOK {
-		return fmt.Errorf("ResponseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub", httpStatusCode, image)
+		return fmt.Errorf("ResponseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed", httpStatusCode, image)
 	}
 
 	tags = append(tags, tagFromJSON(resp.Bytes())...)
@@ -70,6 +70,7 @@ func main() {
 	debug := flag.Bool("debug", false, "Whether debug mode should be enabled.")
 	dockerfile := flag.Bool("dockerfile", false, "Whether dockerfile should be checked.")
 	image := flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
+	official := flag.Bool("official", false, "Use this parameter if an image is official according to dockerhub.")
 	latest := flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
 	version := flag.Bool("version", false, "The version of DIP.")
 
@@ -85,12 +86,19 @@ func main() {
 		return
 	}
 
+	var dockerHubImage string
+	if *official {
+		dockerHubImage = "library/" + *image
+	} else {
+		dockerHubImage = *image
+	}
+
 	if *debug {
 		log.SetReportCaller(true)
 		log.SetLevel(log.DebugLevel)
 	}
 
-	if err := allTags(*image, 1); err != nil {
+	if err := allTags(dockerHubImage, 1); err != nil {
 		log.Fatal(err)
 	}
 	log.Debug(tags)
@@ -101,27 +109,28 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var s string
+	var latestTag string
 	for _, tag := range tags {
 		if r.MatchString(tag) {
-			s = r.FindString(tag)
+			latestTag = r.FindString(tag)
 			break
 		}
 	}
-	if s == "" {
+	if latestTag == "" {
 		log.Fatal("No tag found. Check whether regex is correct")
 	}
-	log.Debugf("Latest tag: '%s' found for image: '%s'", s, *image)
+	log.Debugf("Latest tag: '%s' found for image: '%s'", latestTag, dockerHubImage)
+	fmt.Println(latestTag)
 
 	if *dockerfile {
 		dft, err := dockerfileTag(*image)
 		if err != nil {
 			log.Fatal(err)
 		}
-		if s != dft {
-			log.Fatalf("Dockerfile tag: '%s' seems to be outdated: '%s'. Please update the tag in the Dockerfile", dft, s)
+		if latestTag != dft {
+			log.Fatalf("Dockerfile tag: '%s' seems to be outdated, as: '%s' exists. Please update the tag in the Dockerfile", dft, latestTag)
 		} else {
-			log.Infof("Dockerfile tag: '%s' is up to date. Latest: '%v'", dft, s)
+			log.Infof("Dockerfile tag: '%s' is up to date. Latest: '%v'", dft, latestTag)
 		}
 	}
 }
