@@ -23,6 +23,8 @@
 
 Docker Image Patrol (DIP) keeps docker images up-to-date.
 
+Note: use `-official` if an image is `official` according to dockerhub.
+
 ## Usage
 
 ```bash
@@ -64,7 +66,7 @@ Usage of ./dip:
 ### nginx
 
 ```bash
-./dip -image nginx -latest ".*(\d+\.){2}\d-alpine$"
+./dip -image nginx -latest ".*(\d+\.){2}\d-alpine$" -official
 ```
 
 ### sonarqube
@@ -82,7 +84,7 @@ Usage of ./dip:
 ### ubuntu
 
 ```bash
-./dip -image ubuntu -latest "^xenial.*"
+./dip -image ubuntu -latest "^xenial.*" -official
 ```
 
 ## dockerfile
@@ -90,11 +92,11 @@ Usage of ./dip:
 ### golang
 
 ```bash
-./dip -image=library/golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile -official
+./dip -image=golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile -official
 ```
 
 ### adoptopenjdk
 
 ```bash
-./dip -image=library/adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile
+./dip -image=adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile -official
 ```
