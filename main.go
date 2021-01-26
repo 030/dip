@@ -4,51 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"regexp"
-	"strconv"
 
 	"github.com/030/dip/cmd"
-	"github.com/levigross/grequests"
 	log "github.com/sirupsen/logrus"
-	"github.com/tidwall/gjson"
 )
 
-const dockerRegistry = "https://registry.hub.docker.com/v2/repositories/"
-
-var tags = []string{}
 var ver string
-
-func allTags(image string, page int) error {
-	resp, err := grequests.Get(dockerRegistry+image+"/tags?page="+strconv.Itoa(page)+"&page_size=100", nil)
-	if err != nil {
-		return err
-	}
-	httpStatusCode := resp.StatusCode
-	if httpStatusCode != http.StatusOK {
-		return fmt.Errorf("ResponseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed", httpStatusCode, image)
-	}
-
-	tags = append(tags, tagFromJSON(resp.Bytes())...)
-	if gjson.GetBytes(resp.Bytes(), "next").String() != "" {
-		log.Debug(gjson.GetBytes(resp.Bytes(), "next"))
-		log.Debug(page)
-		page++
-		if err := allTags(image, page); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func tagFromJSON(b []byte) []string {
-	tags := gjson.GetBytes(b, "results.#.name").Array()
-	tagsFromJSON := []string{}
-	for _, tag := range tags {
-		tagsFromJSON = append(tagsFromJSON, tag.String())
-	}
-	return tagsFromJSON
-}
 
 func dockerfileTag(i string) (string, error) {
 	b, err := ioutil.ReadFile("Dockerfile")
@@ -87,30 +49,12 @@ func main() {
 		return
 	}
 
-	var dockerHubImage string
-	if *official {
-		dockerHubImage = "library/" + *image
-	} else {
-		dockerHubImage = *image
-	}
-
 	if *debug {
 		log.SetReportCaller(true)
 		log.SetLevel(log.DebugLevel)
 	}
 
-	if err := allTags(dockerHubImage, 1); err != nil {
-		log.Fatal(err)
-	}
-	log.Debug(tags)
-	log.Debug(len(tags))
-
-	r, err := regexp.Compile(*latest)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	latestTag := cmd.LatestDockerHubTagBasedOnRegex(r, tags)
+	latestTag := cmd.LatestDockerHubTagBasedOnRegex(*official, *latest, *image)
 	fmt.Println(latestTag)
 
 	if *dockerfile {
