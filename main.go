@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/030/dip/cmd"
 	"github.com/levigross/grequests"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -109,17 +110,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var latestTag string
-	for _, tag := range tags {
-		if r.MatchString(tag) {
-			latestTag = r.FindString(tag)
-			break
-		}
-	}
-	if latestTag == "" {
-		log.Fatal("No tag found. Check whether regex is correct")
-	}
-	log.Debugf("Latest tag: '%s' found for image: '%s'", latestTag, dockerHubImage)
+	latestTag := cmd.LatestDockerHubTagBasedOnRegex(r, tags)
 	fmt.Println(latestTag)
 
 	if *dockerfile {
