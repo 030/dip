@@ -72,6 +72,7 @@ func LatestDockerHubTagBasedOnRegex(official bool, latest string, image string) 
 			break
 		}
 	}
+	tags = tags[:0] // reset slice to prevent that tags related to other image will be found on checking another image
 	if latestTag == "" {
 		log.Fatal("No tag found. Check whether regex is correct")
 	}
