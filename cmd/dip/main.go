@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"regexp"
 
-	"github.com/030/dip/cmd"
+	"github.com/030/dip/pkg/dockerhub"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -54,7 +54,7 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	latestTag := cmd.LatestDockerHubTagBasedOnRegex(*official, *latest, *image)
+	latestTag := dockerhub.LatestTagBasedOnRegex(*official, *latest, *image)
 	fmt.Println(latestTag)
 
 	if *dockerfile {
