@@ -1,4 +1,4 @@
-package cmd
+package dockerhub
 
 import (
 	"fmt"
@@ -46,7 +46,7 @@ func tagFromJSON(b []byte) []string {
 	return tagsFromJSON
 }
 
-func LatestDockerHubTagBasedOnRegex(official bool, latest string, image string) string {
+func LatestTagBasedOnRegex(official bool, latest string, image string) string {
 	var dockerHubImage string
 	if official {
 		dockerHubImage = "library/" + image
