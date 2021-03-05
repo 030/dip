@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var ver string
+var Version string
 
 func dockerfileTag(i string) (string, error) {
 	b, err := ioutil.ReadFile("Dockerfile")
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	if *version {
-		fmt.Println(ver)
+		fmt.Println(Version)
 		return
 	}
 
