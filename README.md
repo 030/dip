@@ -25,6 +25,8 @@ Docker Image Patrol (DIP) keeps docker images up-to-date.
 
 ## Installation
 
+Keep Docker Images Up To Date (KDIUTD)
+
 ```bash
 sudo snap install kdiutd
 ```
