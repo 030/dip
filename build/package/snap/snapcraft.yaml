@@ -1,8 +1,7 @@
 ---
 name: kdiutd
 base: core
-compression: lzo
-version: 2.1.3
+version: 2.1.4
 summary: Docker Image Patrol
 description: |
   Keep docker images up-to-date.
