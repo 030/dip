@@ -7,16 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.4] - 2021-03-26
+
 ### Added
 
 - Snapcraft package.
 
-## [2.1.3] - 2020-03-5
+### Fixed
+
+- Latest update version was not returned.
+
+### Removed
+
+- `lzo` compression as it results in larger snap packages.
+
+## [2.1.3] - 2021-03-5
 
 ### Fixed
 
 - Return latest tag.
 
-[Unreleased]: https://github.com/030/dip/compare/2.1.3...HEAD
+[Unreleased]: https://github.com/030/dip/compare/2.1.4...HEAD
+[2.1.4]: https://github.com/030/dip/compare/2.1.3...2.1.4
 [2.1.3]: https://github.com/030/dip/compare/2.1.2...2.1.3
 [2.1.2]: https://github.com/030/dip/releases/tag/2.1.2
