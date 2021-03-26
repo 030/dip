@@ -18,6 +18,7 @@
 [![GolangCI](https://golangci.com/badges/github.com/golangci/golangci-web.svg)](https://golangci.com/r/github.com/030/dip)
 [![BCH compliance](https://bettercodehub.com/edge/badge/030/dip?branch=master)](https://bettercodehub.com/results/030/dip)
 [![Chocolatey](https://img.shields.io/chocolatey/dt/dip)](https://chocolatey.org/packages/dip)
+[![Snap](https://snapcraft.io/kdiutd/badge.svg)](https://snapcraft.io/kdiutd)
 
 <a href="https://dip.releasesoftwaremoreoften.com"><img src="https://github.com/030/dip/raw/master/assets/logo/logo.png" width="100"></a>
 
