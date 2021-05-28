@@ -22,7 +22,7 @@ func dockerfileTag(i string) (string, error) {
 		return "", err
 	}
 	if !r.Match(b) {
-		return "", fmt.Errorf("No match")
+		return "", fmt.Errorf("no match")
 	}
 	group := r.FindSubmatch(b)
 	log.Debugf("Dockerfile image: '%s' and tag: '%s'", i, string(group[1]))
@@ -54,7 +54,10 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	latestTag := dockerhub.LatestTagBasedOnRegex(*official, *latest, *image)
+	latestTag, err := dockerhub.LatestTagBasedOnRegex(*official, *latest, *image)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(latestTag)
 
 	if *dockerfile {
