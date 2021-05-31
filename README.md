@@ -113,3 +113,15 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 ```bash
 ./dip -image=adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile -official
 ```
+
+## docker
+
+```bash
+docker run utrecht/dip:2.0.5 -image=grafana/grafana -latest=^7\.5\.7$
+```
+
+will return:
+
+```bash
+7.5.7
+```
