@@ -1,7 +1,7 @@
 ---
 name: kdiutd
 base: core
-version: 2.1.4
+version: 2.1.5
 summary: Docker Image Patrol
 description: |
   Keep docker images up-to-date.
