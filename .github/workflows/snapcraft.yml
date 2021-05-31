@@ -19,7 +19,7 @@ jobs:
         id: snapcraft
       - run: |
           sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
-          dip --version | grep "[0-9]\."
+          kdiutd.dip --version | grep "[0-9]\."
       - uses: snapcore/action-publish@v1
         with:
           store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
