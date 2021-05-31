@@ -117,7 +117,7 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 ## docker
 
 ```bash
-docker run utrecht/dip:2.0.5 -image=grafana/grafana -latest=^7\.5\.7$
+docker run utrecht/dip:2.1.5 -image=grafana/grafana -latest=^7\.5\.7$
 ```
 
 will return:
