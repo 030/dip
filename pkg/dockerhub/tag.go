@@ -23,7 +23,7 @@ func allTags(image string, page int) error {
 	}
 	httpStatusCode := resp.StatusCode
 	if httpStatusCode != http.StatusOK {
-		return fmt.Errorf("ResponseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed", httpStatusCode, image)
+		return fmt.Errorf("responseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed", httpStatusCode, image)
 	}
 
 	tags = append(tags, tagFromJSON(resp.Bytes())...)
@@ -47,12 +47,10 @@ func tagFromJSON(b []byte) []string {
 	return tagsFromJSON
 }
 
-func LatestTagBasedOnRegex(official bool, latest string, image string) string {
-	var dockerHubImage string
+func LatestTagBasedOnRegex(official bool, latest string, image string) (string, error) {
+	dockerHubImage := image
 	if official {
 		dockerHubImage = "library/" + image
-	} else {
-		dockerHubImage = image
 	}
 
 	if err := allTags(dockerHubImage, 1); err != nil {
@@ -64,7 +62,7 @@ func LatestTagBasedOnRegex(official bool, latest string, image string) string {
 
 	r, err := regexp.Compile(latest)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	var latestTags []string
@@ -76,16 +74,16 @@ func LatestTagBasedOnRegex(official bool, latest string, image string) string {
 	}
 	tags = tags[:0] // reset slice to prevent that tags related to other image will be found on checking another image
 	if latestTags == nil {
-		log.Fatal("No tags were found. Check whether regex is correct")
+		return "", fmt.Errorf("no tags were found. Check whether regex is correct")
 	}
 	log.Debug(latestTags)
 	latestTag, err := sort.Tags(latestTags)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	log.Debugf("Latest tag: '%s'", latestTag)
-	return latestTag
+	return latestTag, nil
 }
 
 func semantic(tag string) (bool, error) {
