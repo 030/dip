@@ -1,6 +1,6 @@
 module github.com/030/dip
 
-go 1.15
+go 1.16
 
 require (
 	github.com/google/go-querystring v1.1.0 // indirect
