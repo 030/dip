@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.6] - 2021-06-21
+
+### Fixed
+
+- Consulting <registry.hub.docker.com/> returns 503.
+
 ## [2.1.5] - 2021-05-29
 
 ### Added
@@ -37,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Return latest tag.
 
-[Unreleased]: https://github.com/030/dip/compare/2.1.5...HEAD
+[Unreleased]: https://github.com/030/dip/compare/2.1.6...HEAD
+[2.1.6]: https://github.com/030/dip/compare/2.1.5...2.1.6
 [2.1.5]: https://github.com/030/dip/compare/2.1.4...2.1.5
 [2.1.4]: https://github.com/030/dip/compare/2.1.3...2.1.4
 [2.1.3]: https://github.com/030/dip/compare/2.1.2...2.1.3
