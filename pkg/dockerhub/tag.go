@@ -12,18 +12,19 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-const dockerRegistry = "https://registry.hub.docker.com/v2/repositories/"
+const dockerRegistry = "https://hub.docker.com/v2/repositories/"
 
 var tags = []string{}
 
 func allTags(image string, page int) error {
-	resp, err := grequests.Get(dockerRegistry+image+"/tags?page="+strconv.Itoa(page)+"&page_size=100", nil)
+	url := dockerRegistry + image + "/tags?page=" + strconv.Itoa(page) + "&page_size=100"
+	resp, err := grequests.Get(url, nil)
 	if err != nil {
 		return err
 	}
 	httpStatusCode := resp.StatusCode
 	if httpStatusCode != http.StatusOK {
-		return fmt.Errorf("responseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed", httpStatusCode, image)
+		return fmt.Errorf("responseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed. URL: '%s'", httpStatusCode, image, url)
 	}
 
 	tags = append(tags, tagFromJSON(resp.Bytes())...)
