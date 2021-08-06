@@ -4,6 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/030/dip)](https://goreportcard.com/report/github.com/030/dip)
 [![Build Status](https://travis-ci.org/030/dip.svg?branch=master)](https://travis-ci.org/030/dip)
 [![DevOps SE Questions](https://img.shields.io/stackexchange/devops/t/dip.svg)](https://devops.stackexchange.com/questions/tagged/dip)
+![Docker Pulls](https://img.shields.io/docker/pulls/utrecht/dip.svg)
 ![Issues](https://img.shields.io/github/issues-raw/030/dip.svg)
 ![Pull requests](https://img.shields.io/github/issues-pr-raw/030/dip.svg)
 ![Total downloads](https://img.shields.io/github/downloads/030/dip/total.svg)
@@ -44,12 +45,53 @@ Usage of ./dip:
         Whether dockerfile should be checked.
   -image string
         Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.
+  -k8s
+        Whether images are up to date in a k8s or openshift cluster.
   -latest string
         The regex to get the latest tag, e.g. "xenial-\d.*".
   -official
         Use this parameter if an image is official according to dockerhub.
   -version
         The version of DIP.
+```
+
+## k8s
+
+Create a `~/.dip/config.yml` file:
+
+```bash
+slack_token: some-token
+dip_images:
+  docker.io/alpine: 3\.[0-9]+\.[0-9]+
+  elastic/elasticsearch: 7\.[0-9]+\.[0-9]+
+  fluent/fluentd-kubernetes-daemonset: v.*-debian-elasticsearch7-.*
+  grafana/grafana: 7\.[0-9]+\.[0-9]+
+  docker.io/kibana: 7\.[0-9]+\.[0-9]+
+  kubernetesui/dashboard: v2\.[0-9]+\.[0-9]+
+  kubernetesui/metrics-scraper: v1\.[0-9]+\.[0-9]+
+  docker.io/mongo: 4\.[0-9]+\.[0-9]+
+  docker.io/postgres: 13\.[0-9]+\.[0-9]+
+  prom/alertmanager: v0\.[0-9]+\.[0-9]+
+  prom/prometheus: v2\.[0-9]+\.[0-9]+
+  prom/pushgateway: v1\.[0-9]+\.[0-9]+
+  sonatype/nexus3: 3\.[0-9]+\.[0-9]+
+```
+
+or for k8s:
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dip-config
+  namespace: dip
+stringData:
+  config.yml: |-
+    ---
+    slack_token: some-token
+    dip_images:
+      docker.io/alpine: 3\.[0-9]+\.[0-9]+
+      elastic/elasticsearch: 7\.[0-9]+\.[0-9]+
 ```
 
 ## latest
@@ -116,8 +158,10 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 
 ## docker
 
+[![dockeri.co](https://dockeri.co/image/utrecht/dip)](https://hub.docker.com/r/utrecht/dip)
+
 ```bash
-docker run utrecht/dip:2.1.5 -image=grafana/grafana -latest=^7\.5\.7$
+docker run utrecht/dip:2.2.0 dip -image=grafana/grafana -latest=^7\.5\.7$
 ```
 
 will return:

@@ -55,7 +55,7 @@ func LatestTagBasedOnRegex(official bool, latest string, image string) (string, 
 	}
 
 	if err := allTags(dockerHubImage, 1); err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	log.Debug(tags)
 	log.Debug(len(tags))
