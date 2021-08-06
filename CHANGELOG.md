@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2021-08-02
+
+### Added
+
+- Check whether docker images in k8s and openshift clusters are outdated.
+
 ## [2.1.6] - 2021-06-21
 
 ### Fixed
@@ -43,7 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Return latest tag.
 
-[Unreleased]: https://github.com/030/dip/compare/2.1.6...HEAD
+[Unreleased]: https://github.com/030/dip/compare/2.2.0...HEAD
+[2.2.0]: https://github.com/030/dip/compare/2.1.6...2.2.0
 [2.1.6]: https://github.com/030/dip/compare/2.1.5...2.1.6
 [2.1.5]: https://github.com/030/dip/compare/2.1.4...2.1.5
 [2.1.4]: https://github.com/030/dip/compare/2.1.3...2.1.4
