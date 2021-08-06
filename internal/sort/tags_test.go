@@ -23,3 +23,15 @@ func TestTags2(t *testing.T) {
 	}
 	assert.Equal(t, exp, act)
 }
+
+func TestTagsError(t *testing.T) {
+	actualError := "cannot find the latest tag. Check whether the tags are semantic"
+	_, err := Tags([]string{""})
+	assert.EqualError(t, err, actualError)
+}
+
+func TestTagsError2(t *testing.T) {
+	actualError := "tags should not be empty"
+	_, err := Tags([]string{})
+	assert.EqualError(t, err, actualError)
+}
