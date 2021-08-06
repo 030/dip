@@ -27,6 +27,9 @@ jobs:
       - name: Use the value
         run: |
           echo "${{ env.dip-deliverable }}"
+      - name: Detect superfluous go modules
+        run: if go mod tidy -v 2>&1 | grep unused && git checkout .; then echo "Superfluous go modules detected! Run 'go mod tidy' locally to resolve the issue" && exit 1; fi
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
       - name: Build
         run: ./scripts/build.sh
         env:
