@@ -1,6 +1,7 @@
 package semantic
 
 import (
+	"fmt"
 	"regexp"
 	"sort"
 	"strconv"
@@ -60,6 +61,10 @@ func update(tag string) (int, error) {
 }
 
 func Latest(tags []string) (string, error) {
+	if len(tags) == 0 {
+		return "", fmt.Errorf("tags should not be empty")
+	}
+
 	latestTag := ""
 	m := make(map[int]string)
 
