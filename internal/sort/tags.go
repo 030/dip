@@ -10,14 +10,12 @@ import (
 func Tags(tags []string) (string, error) {
 	log.Debugf("Input: '%v'", tags)
 
-	var latestTag string
-	latestSemanticTag, err := semantic.Latest(tags)
+	latestTag, err := semantic.Latest(tags)
 	if err != nil {
 		return "", err
 	}
-	latestTag = latestSemanticTag
 
-	if latestSemanticTag == "" {
+	if latestTag == "" {
 		latestTag = tags[0]
 	}
 
