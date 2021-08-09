@@ -76,7 +76,7 @@ spec:
               command:
                 - dip
               args:
-                - k8s
+                - -k8s
                 - -config
                 - /home/dip/.dip/config.yml
               volumeMounts:
