@@ -24,18 +24,16 @@ var clusterImages []string
 
 func inOrOutsideCluster(kubeconfig string) (*rest.Config, error) {
 	var config *rest.Config
-	if _, err := os.Stat(kubeconfig); os.IsNotExist(err) {
+	_, err := os.Stat(kubeconfig)
+	if os.IsNotExist(err) {
 		log.Info("~/.kube/config does not exist. Assuming that the program is run inside a cluster.")
 		config, err = rest.InClusterConfig()
-		if err != nil {
-			return nil, err
-		}
 	} else {
 		log.Info("~/.kube/config exists. Assuming that the program is run outside a cluster.")
 		config, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
-		if err != nil {
-			return nil, err
-		}
+	}
+	if err != nil {
+		return nil, err
 	}
 	return config, nil
 }
