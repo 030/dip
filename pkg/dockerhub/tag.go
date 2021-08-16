@@ -48,24 +48,11 @@ func tagFromJSON(b []byte) []string {
 	return tagsFromJSON
 }
 
-func LatestTagBasedOnRegex(official bool, latest string, image string) (string, error) {
-	dockerHubImage := image
-	if official {
-		dockerHubImage = "library/" + image
-	}
-
-	if err := allTags(dockerHubImage, 1); err != nil {
-		return "", err
-	}
-	log.Debug(tags)
-	log.Debug(len(tags))
-	log.Debugf("Regex: '%s'", latest)
-
+func bla(latest string) (string, error) {
 	r, err := regexp.Compile(latest)
 	if err != nil {
 		return "", err
 	}
-
 	var latestTags []string
 	for _, tag := range tags {
 		log.Debugf("Check whether: '%s', matches regex: '%s'", tag, latest)
@@ -85,6 +72,22 @@ func LatestTagBasedOnRegex(official bool, latest string, image string) (string, 
 
 	log.Debugf("Latest tag: '%s'", latestTag)
 	return latestTag, nil
+}
+
+func LatestTagBasedOnRegex(official bool, latest string, image string) (string, error) {
+	dockerHubImage := image
+	if official {
+		dockerHubImage = "library/" + image
+	}
+
+	if err := allTags(dockerHubImage, 1); err != nil {
+		return "", err
+	}
+	log.Debug(tags)
+	log.Debug(len(tags))
+	log.Debugf("Regex: '%s'", latest)
+
+	return bla(latest)
 }
 
 func semantic(tag string) (bool, error) {
