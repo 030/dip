@@ -88,7 +88,7 @@ func foo(containerImage, kind, name, namespace, path string, images map[string]i
 		containerImageTagInsideCluster := group[2]
 		containerImageWithoutTag := group[1]
 
-		latestTag, err := dockerhub.LatestTagBasedOnRegex(false, tagString, containerImageWithoutTag)
+		latestTag, err := dockerhub.LatestTagBasedOnRegex(tagString, containerImageWithoutTag)
 		if err != nil {
 			return err
 		}

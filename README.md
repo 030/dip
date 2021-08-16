@@ -33,8 +33,6 @@ Keep Docker Images Up To Date (KDIUTD)
 sudo snap install kdiutd
 ```
 
-Note: use `-official` if an image is `official` according to dockerhub.
-
 ## Usage
 
 ```bash
@@ -49,8 +47,6 @@ Usage of ./dip:
         Whether images are up to date in a k8s or openshift cluster.
   -latest string
         The regex to get the latest tag, e.g. "xenial-\d.*".
-  -official
-        Use this parameter if an image is official according to dockerhub.
   -version
         The version of DIP.
 ```
@@ -60,7 +56,6 @@ Usage of ./dip:
 Create a `~/.dip/config.yml` file:
 
 ```bash
-slack_token: some-token
 dip_images:
   docker.io/alpine: 3\.[0-9]+\.[0-9]+
   elastic/elasticsearch: 7\.[0-9]+\.[0-9]+
@@ -77,6 +72,12 @@ dip_images:
   sonatype/nexus3: 3\.[0-9]+\.[0-9]+
 ```
 
+and create a `~/.dip/creds.yml` file:
+
+```bash
+slack_token: some-token
+```
+
 or for k8s:
 
 ```bash
@@ -88,10 +89,12 @@ metadata:
 stringData:
   config.yml: |-
     ---
-    slack_token: some-token
     dip_images:
       docker.io/alpine: 3\.[0-9]+\.[0-9]+
       elastic/elasticsearch: 7\.[0-9]+\.[0-9]+
+  creds.yml: |-
+    ---
+    slack_token: some-token
 ```
 
 ## latest
@@ -99,7 +102,7 @@ stringData:
 ### alpine
 
 ```bash
-./dip -image alpine -latest "(\d+\.){2}\d" --official
+./dip -image alpine -latest "(\d+\.){2}\d"
 ```
 
 ### minio
@@ -117,7 +120,7 @@ stringData:
 ### nginx
 
 ```bash
-./dip -image nginx -latest ".*(\d+\.){2}\d-alpine$" -official
+./dip -image nginx -latest ".*(\d+\.){2}\d-alpine$"
 ```
 
 ### sonarqube
@@ -129,13 +132,13 @@ stringData:
 ### traefik
 
 ```bash
-./dip --image=traefik --latest="^v(\d+\.){1,2}\d+$" --official
+./dip --image=traefik --latest="^v(\d+\.){1,2}\d+$"
 ```
 
 ### ubuntu
 
 ```bash
-./dip -image ubuntu -latest "^xenial.*" -official
+./dip -image ubuntu -latest "^xenial.*"
 ```
 
 ## dockerfile
@@ -147,13 +150,13 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 ### golang
 
 ```bash
-./dip -image=golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile -official
+./dip -image=golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile
 ```
 
 ### adoptopenjdk
 
 ```bash
-./dip -image=adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile -official
+./dip -image=adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile
 ```
 
 ## docker
