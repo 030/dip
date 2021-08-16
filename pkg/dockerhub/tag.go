@@ -24,7 +24,7 @@ func allTags(image string, page int) error {
 	}
 	httpStatusCode := resp.StatusCode
 	if httpStatusCode != http.StatusOK {
-		return fmt.Errorf("responseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. Perhaps it is an official image and -official is needed. URL: '%s'", httpStatusCode, image, url)
+		return fmt.Errorf("responseCode not 200, but: '%v'. Check whether image: '%v', exists on dockerhub. URL: '%s'", httpStatusCode, image, url)
 	}
 
 	tags = append(tags, tagFromJSON(resp.Bytes())...)
@@ -74,9 +74,13 @@ func bla(latest string) (string, error) {
 	return latestTag, nil
 }
 
-func LatestTagBasedOnRegex(official bool, latest string, image string) (string, error) {
+func LatestTagBasedOnRegex(latest string, image string) (string, error) {
+	match, err := regexp.MatchString(".*/.*", image)
+	if err != nil {
+		return "", err
+	}
 	dockerHubImage := image
-	if official {
+	if !match {
 		dockerHubImage = "library/" + image
 	}
 
