@@ -1,6 +1,6 @@
 ---
 name: kdiutd
-base: core
+base: core20
 version: 3.0.0
 summary: Docker Image Patrol
 description: |
