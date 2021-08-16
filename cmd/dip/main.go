@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	debug, dockerfile, k8sArg, official, version *bool
-	config, image, latest                        *string
-	Version                                      string
+	debug, dockerfile, k8sArg, version *bool
+	config, image, latest              *string
+	Version                            string
 )
 
 func dockerfileTag(i string) (string, error) {
@@ -35,7 +35,7 @@ func dockerfileTag(i string) (string, error) {
 }
 
 func dockerfileOption() error {
-	latestTag, err := dockerhub.LatestTagBasedOnRegex(*official, *latest, *image)
+	latestTag, err := dockerhub.LatestTagBasedOnRegex(*latest, *image)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,6 @@ func main() {
 	image = flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
 	k8sArg = flag.Bool("k8s", false, "Whether images are up to date in a k8s or openshift cluster.")
 	latest = flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
-	official = flag.Bool("official", false, "Use this parameter if an image is official according to dockerhub.")
 	version = flag.Bool("version", false, "The version of DIP.")
 
 	flag.Parse()
