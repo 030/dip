@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"regexp"
 
 	"github.com/030/dip/internal/k8s"
@@ -78,12 +79,11 @@ func validationOption() error {
 	return nil
 }
 
-func versionOption() error {
+func versionOption() {
 	if *version {
 		fmt.Println(Version)
-		return nil
+		os.Exit(0)
 	}
-	return nil
 }
 
 func options() error {
@@ -97,9 +97,7 @@ func options() error {
 		return err
 	}
 
-	if err := versionOption(); err != nil {
-		return err
-	}
+	versionOption()
 
 	if err := dockerfileOption(); err != nil {
 		return err
