@@ -60,22 +60,9 @@ func update(tag string) (int, error) {
 	return u, nil
 }
 
-func Latest(tags []string) (string, error) {
-	if len(tags) == 0 {
-		return "", fmt.Errorf("tags should not be empty")
-	}
-
-	latestTag := ""
+func boo(semanticTags []string) (string, error) {
 	m := make(map[int]string)
-
-	semanticTags, err := Check(tags)
-	if err != nil {
-		return "", err
-	}
-	if len(semanticTags) == 0 {
-		log.Debug("No semantic tags found")
-	}
-
+	latestTag := ""
 	for _, semanticTag := range semanticTags {
 		log.Debugf("tag: '%v'", semanticTag)
 
@@ -127,4 +114,19 @@ func Latest(tags []string) (string, error) {
 		}
 	}
 	return latestTag, nil
+}
+
+func Latest(tags []string) (string, error) {
+	if len(tags) == 0 {
+		return "", fmt.Errorf("tags should not be empty")
+	}
+
+	semanticTags, err := Check(tags)
+	if err != nil {
+		return "", err
+	}
+	if len(semanticTags) == 0 {
+		log.Debug("No semantic tags found")
+	}
+	return boo(semanticTags)
 }
