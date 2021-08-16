@@ -78,6 +78,14 @@ func validationOption() error {
 	return nil
 }
 
+func versionOption() error {
+	if *version {
+		fmt.Println(Version)
+		return nil
+	}
+	return nil
+}
+
 func options() error {
 	debugOption()
 
@@ -89,9 +97,8 @@ func options() error {
 		return err
 	}
 
-	if *version {
-		fmt.Println(Version)
-		return nil
+	if err := versionOption(); err != nil {
+		return err
 	}
 
 	if err := dockerfileOption(); err != nil {
