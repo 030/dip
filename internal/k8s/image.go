@@ -75,16 +75,7 @@ func authenticate() (*rest.Config, error) {
 	return config, nil
 }
 
-func checkWhetherImagesAreUpToDate(containerImage, namespace, path, kind, name string) error {
-	clusterImages = append(clusterImages, containerImage)
-
-	if err := viperBase(path, "config"); err != nil {
-		return err
-	}
-	images := viper.GetStringMap("dip_images")
-	if len(images) == 0 {
-		return fmt.Errorf("no images found. Check whether the 'dip_images' variable is populated in '%s'", viper.ConfigFileUsed())
-	}
+func foo(containerImage, kind, name, namespace, path string, images map[string]interface{}) error {
 	for image, tag := range images {
 		tagString := fmt.Sprintf("%v", tag)
 		r := regexp.MustCompile("^(" + image + "):(" + tagString + ")")
@@ -127,6 +118,20 @@ func checkWhetherImagesAreUpToDate(containerImage, namespace, path, kind, name s
 		}
 	}
 	return nil
+}
+
+func checkWhetherImagesAreUpToDate(containerImage, namespace, path, kind, name string) error {
+	clusterImages = append(clusterImages, containerImage)
+
+	if err := viperBase(path, "config"); err != nil {
+		return err
+	}
+	images := viper.GetStringMap("dip_images")
+	if len(images) == 0 {
+		return fmt.Errorf("no images found. Check whether the 'dip_images' variable is populated in '%s'", viper.ConfigFileUsed())
+	}
+
+	return foo(containerImage, kind, name, namespace, path, images)
 }
 
 func cronJobInitContainersAndContainers(cronJob v1beta1.CronJob, path, namespaceName string) error {
