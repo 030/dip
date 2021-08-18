@@ -1,6 +1,6 @@
 module github.com/030/dip
 
-go 1.16
+go 1.17
 
 require (
 	github.com/030/sasm v0.0.0-20210728054738-6a73fa975bdd
