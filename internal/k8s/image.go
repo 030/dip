@@ -7,11 +7,10 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/030/dip/internal/slack"
 	"github.com/030/dip/pkg/dockerhub"
-	sasm "github.com/030/sasm/pkg/slack"
 	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	v1 "k8s.io/api/apps/v1"
 	"k8s.io/api/batch/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -20,28 +19,13 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-const ext = "yml"
+var (
+	clusterImages []string
+)
 
-var clusterImages []string
-
-func viperBase(path, filename string) error {
-	home, err := homedir.Dir()
-	if err != nil {
-		return err
-	}
-
-	viper.SetConfigName(filename)
-	viper.SetConfigType(ext)
-	viper.AddConfigPath(filepath.Join(home, ".dip"))
-
-	if path != "" {
-		viper.SetConfigFile(filepath.Join(path, filename+"."+ext))
-	}
-
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("fatal error config file: %v", err)
-	}
-	return nil
+type Images struct {
+	ToBeValidated map[string]interface{}
+	SlackToken    string
 }
 
 func inOrOutsideCluster(kubeconfig string) (*rest.Config, error) {
@@ -75,7 +59,31 @@ func authenticate() (*rest.Config, error) {
 	return config, nil
 }
 
-func foo(containerImage, kind, name, namespace, path string, images map[string]interface{}) error {
+func (i *Images) checkIfOutdated(image, kind, name, namespace, tagString, containerImageWithoutTag, containerImageTagInsideCluster string) error {
+	latestTag, err := dockerhub.LatestTagBasedOnRegex(tagString, containerImageWithoutTag)
+	if err != nil {
+		return err
+	}
+	if latestTag != tagString {
+		msg := fmt.Sprintf("Image: '%s' with tag: '%s' in %s: '%s' in namespace: '%s' outdated. Latest tag: '%s'", image, containerImageTagInsideCluster, kind, name, namespace, latestTag)
+		if err := slack.SendMessage(msg, i.SlackToken); err != nil {
+			return err
+		}
+
+		log.Warningf("image: '%s' outdated", image)
+		log.Info("other clusterImages:")
+		for _, clusterImage := range clusterImages {
+			log.Info(clusterImage)
+		}
+		return nil
+	}
+	return nil
+}
+
+func (i *Images) checkWhetherImagesAreUpToDate(containerImage, namespace, kind, name string) error {
+	clusterImages = append(clusterImages, containerImage)
+
+	images := i.ToBeValidated
 	for image, tag := range images {
 		tagString := fmt.Sprintf("%v", tag)
 		r := regexp.MustCompile("^(" + image + "):(" + tagString + ")")
@@ -84,57 +92,19 @@ func foo(containerImage, kind, name, namespace, path string, images map[string]i
 			continue
 		}
 		group := r.FindStringSubmatch(containerImage)
+		if len(group) == 0 {
+			return fmt.Errorf("containerImage should not be empty")
+		}
 
-		containerImageTagInsideCluster := group[2]
 		containerImageWithoutTag := group[1]
+		containerImageTagInsideCluster := group[2]
 
-		latestTag, err := dockerhub.LatestTagBasedOnRegex(tagString, containerImageWithoutTag)
-		if err != nil {
-			return err
-		}
-		if latestTag != tagString {
-			msg := fmt.Sprintf("Image: '%s' with tag: '%s' in %s: '%s' in namespace: '%s' outdated. Latest tag: '%s'", image, containerImageTagInsideCluster, kind, name, namespace, latestTag)
-			log.Info("Sending message to Slack...")
-			t := sasm.Text{Type: "mrkdwn", Text: msg}
-			b := []sasm.Blocks{{Type: "section", Text: &t}}
-			d := sasm.Data{Blocks: b, Channel: "#dip", Icon: ":dip:", Username: "dip"}
-
-			if err := viperBase(path, "creds"); err != nil {
-				return err
-			}
-			slackToken := viper.GetString("slack_token")
-			if slackToken == "" {
-				log.Fatalf("slack_token should not be empty. Check whether these resides in: '%s'", viper.ConfigFileUsed())
-			}
-			if err := d.PostMessage(slackToken); err != nil {
-				return err
-			}
-			log.Warningf("image: '%s' outdated", image)
-			log.Info("other clusterImages:")
-			for _, clusterImage := range clusterImages {
-				log.Info(clusterImage)
-			}
-			os.Exit(0)
-		}
+		return i.checkIfOutdated(image, kind, name, namespace, tagString, containerImageWithoutTag, containerImageTagInsideCluster)
 	}
 	return nil
 }
 
-func checkWhetherImagesAreUpToDate(containerImage, namespace, path, kind, name string) error {
-	clusterImages = append(clusterImages, containerImage)
-
-	if err := viperBase(path, "config"); err != nil {
-		return err
-	}
-	images := viper.GetStringMap("dip_images")
-	if len(images) == 0 {
-		return fmt.Errorf("no images found. Check whether the 'dip_images' variable is populated in '%s'", viper.ConfigFileUsed())
-	}
-
-	return foo(containerImage, kind, name, namespace, path, images)
-}
-
-func cronJobInitContainersAndContainers(cronJob v1beta1.CronJob, path, namespaceName string) error {
+func (i *Images) cronJobInitContainersAndContainers(cronJob v1beta1.CronJob, namespaceName string) error {
 	kind := "CronJob"
 	name := cronJob.Name
 	log.Infof("%s: '%s'", kind, name)
@@ -142,21 +112,21 @@ func cronJobInitContainersAndContainers(cronJob v1beta1.CronJob, path, namespace
 	for _, initContainer := range cronJob.Spec.JobTemplate.Spec.Template.Spec.InitContainers {
 		initContainerImage := initContainer.Image
 		log.Infof("initContainer image: %s", initContainer.Image)
-		if err := checkWhetherImagesAreUpToDate(initContainerImage, namespaceName, path, kind, name); err != nil {
+		if err := i.checkWhetherImagesAreUpToDate(initContainerImage, namespaceName, kind, name); err != nil {
 			return err
 		}
 	}
 	for _, container := range cronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		containerImage := container.Image
 		log.Infof("container image: %s", container.Image)
-		if err := checkWhetherImagesAreUpToDate(containerImage, namespaceName, path, kind, name); err != nil {
+		if err := i.checkWhetherImagesAreUpToDate(containerImage, namespaceName, kind, name); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func cronJobImages(kcs *kubernetes.Clientset, path, namespaceName string) error {
+func (i *Images) cronJobImages(kcs *kubernetes.Clientset, namespaceName string) error {
 	cronJobList, err := kcs.BatchV1beta1().CronJobs(namespaceName).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
@@ -164,14 +134,14 @@ func cronJobImages(kcs *kubernetes.Clientset, path, namespaceName string) error 
 	cronJobs := cronJobList.Items
 	log.Infof("There are %d deployments in the cluster\n", len(cronJobs))
 	for _, cronJob := range cronJobs {
-		if err := cronJobInitContainersAndContainers(cronJob, path, namespaceName); err != nil {
+		if err := i.cronJobInitContainersAndContainers(cronJob, namespaceName); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func deploymentInitContainersAndContainers(deployment v1.Deployment, path, namespaceName string) error {
+func (i *Images) deploymentInitContainersAndContainers(deployment v1.Deployment, namespaceName string) error {
 	kind := "Deployment"
 	name := deployment.Name
 	log.Infof("%s: '%s'", kind, name)
@@ -179,21 +149,21 @@ func deploymentInitContainersAndContainers(deployment v1.Deployment, path, names
 	for _, initContainer := range deployment.Spec.Template.Spec.InitContainers {
 		initContainerImage := initContainer.Image
 		log.Infof("initContainer image: %s", initContainer.Image)
-		if err := checkWhetherImagesAreUpToDate(initContainerImage, namespaceName, path, kind, name); err != nil {
+		if err := i.checkWhetherImagesAreUpToDate(initContainerImage, namespaceName, kind, name); err != nil {
 			return err
 		}
 	}
 	for _, container := range deployment.Spec.Template.Spec.Containers {
 		containerImage := container.Image
 		log.Infof("container image: %s", container.Image)
-		if err := checkWhetherImagesAreUpToDate(containerImage, namespaceName, path, kind, name); err != nil {
+		if err := i.checkWhetherImagesAreUpToDate(containerImage, namespaceName, kind, name); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func deploymentImages(kcs *kubernetes.Clientset, path, namespaceName string) error {
+func (i *Images) deploymentImages(kcs *kubernetes.Clientset, namespaceName string) error {
 	deploymentList, err := kcs.AppsV1().Deployments(namespaceName).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
@@ -201,14 +171,14 @@ func deploymentImages(kcs *kubernetes.Clientset, path, namespaceName string) err
 	deployments := deploymentList.Items
 	log.Infof("There are %d deployments in the cluster\n", len(deployments))
 	for _, deployment := range deployments {
-		if err := deploymentInitContainersAndContainers(deployment, path, namespaceName); err != nil {
+		if err := i.deploymentInitContainersAndContainers(deployment, namespaceName); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func statefulSetInitContainersAndContainers(statefulSet v1.StatefulSet, path, namespaceName string) error {
+func (i *Images) statefulSetInitContainersAndContainers(statefulSet v1.StatefulSet, namespaceName string) error {
 	kind := "StatefulSet"
 	name := statefulSet.Name
 	log.Infof("%s: '%s'", kind, name)
@@ -216,21 +186,21 @@ func statefulSetInitContainersAndContainers(statefulSet v1.StatefulSet, path, na
 	for _, initContainer := range statefulSet.Spec.Template.Spec.InitContainers {
 		initContainerImage := initContainer.Image
 		log.Infof("initContainer image: %s", initContainer.Image)
-		if err := checkWhetherImagesAreUpToDate(initContainerImage, namespaceName, path, kind, name); err != nil {
+		if err := i.checkWhetherImagesAreUpToDate(initContainerImage, namespaceName, kind, name); err != nil {
 			return err
 		}
 	}
 	for _, container := range statefulSet.Spec.Template.Spec.Containers {
 		containerImage := container.Image
 		log.Infof("container image: %s", container.Image)
-		if err := checkWhetherImagesAreUpToDate(containerImage, namespaceName, path, kind, name); err != nil {
+		if err := i.checkWhetherImagesAreUpToDate(containerImage, namespaceName, kind, name); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func statefulSetImages(kcs *kubernetes.Clientset, path, namespaceName string) error {
+func (i *Images) statefulSetImages(kcs *kubernetes.Clientset, namespaceName string) error {
 	statefulSetList, err := kcs.AppsV1().StatefulSets(namespaceName).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return err
@@ -238,14 +208,14 @@ func statefulSetImages(kcs *kubernetes.Clientset, path, namespaceName string) er
 	statefulSets := statefulSetList.Items
 	log.Infof("There are %d statefulSets in the cluster\n", len(statefulSets))
 	for _, statefulSet := range statefulSets {
-		if err := statefulSetInitContainersAndContainers(statefulSet, path, namespaceName); err != nil {
+		if err := i.statefulSetInitContainersAndContainers(statefulSet, namespaceName); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func Images(path string) error {
+func (i *Images) UpToDate() error {
 	auth, err := authenticate()
 	if err != nil {
 		return err
@@ -265,13 +235,13 @@ func Images(path string) error {
 	for _, namespace := range namespaces {
 		namespaceName := namespace.Name
 		log.Infof("namespaceName: '%s'", namespaceName)
-		if err := cronJobImages(clientset, path, namespaceName); err != nil {
+		if err := i.cronJobImages(clientset, namespaceName); err != nil {
 			return err
 		}
-		if err := deploymentImages(clientset, path, namespaceName); err != nil {
+		if err := i.deploymentImages(clientset, namespaceName); err != nil {
 			return err
 		}
-		if err := statefulSetImages(clientset, path, namespaceName); err != nil {
+		if err := i.statefulSetImages(clientset, namespaceName); err != nil {
 			return err
 		}
 

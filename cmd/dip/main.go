@@ -5,12 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 
 	"github.com/030/dip/internal/k8s"
 	"github.com/030/dip/pkg/dockerhub"
+	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
+
+const ext = "yml"
 
 var (
 	debug, dockerfile, k8sArg, version *bool
@@ -64,7 +69,18 @@ func debugOption() {
 
 func k8sArgOption() error {
 	if *k8sArg {
-		if err := k8s.Images(*config); err != nil {
+		token, err := slackToken()
+		if err != nil {
+			return err
+		}
+
+		images, err := imagesToBeValidated()
+		if err != nil {
+			return err
+		}
+
+		k := k8s.Images{ToBeValidated: images, SlackToken: token}
+		if err := k.UpToDate(); err != nil {
 			return err
 		}
 	}
@@ -104,6 +120,45 @@ func options() error {
 	}
 
 	return nil
+}
+
+func viperBase(path, filename string) error {
+	home, err := homedir.Dir()
+	if err != nil {
+		return err
+	}
+
+	viper.SetConfigName(filename)
+	viper.SetConfigType(ext)
+	viper.AddConfigPath(filepath.Join(home, ".dip"))
+
+	if path != "" {
+		viper.SetConfigFile(filepath.Join(path, filename+"."+ext))
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		return fmt.Errorf("fatal error config file: %v", err)
+	}
+	return nil
+}
+
+func slackToken() (string, error) {
+	if err := viperBase(*config, "creds"); err != nil {
+		return "", err
+	}
+	slackToken := viper.GetString("slack_token")
+	return slackToken, nil
+}
+
+func imagesToBeValidated() (map[string]interface{}, error) {
+	if err := viperBase(*config, "config"); err != nil {
+		return nil, err
+	}
+	images := viper.GetStringMap("dip_images")
+	if len(images) == 0 {
+		return nil, fmt.Errorf("no images found. Check whether the 'dip_images' variable is populated in '%s'", viper.ConfigFileUsed())
+	}
+	return images, nil
 }
 
 func main() {
