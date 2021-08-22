@@ -74,7 +74,7 @@ func bla(latest string) (string, error) {
 	return latestTag, nil
 }
 
-func LatestTagBasedOnRegex(latest string, image string) (string, error) {
+func LatestTagBasedOnRegex(regex, image string) (string, error) {
 	match, err := regexp.MatchString(".*/.*", image)
 	if err != nil {
 		return "", err
@@ -89,9 +89,9 @@ func LatestTagBasedOnRegex(latest string, image string) (string, error) {
 	}
 	log.Debug(tags)
 	log.Debug(len(tags))
-	log.Debugf("Regex: '%s'", latest)
+	log.Debugf("Regex: '%s'", regex)
 
-	return bla(latest)
+	return bla(regex)
 }
 
 func semantic(tag string) (bool, error) {
