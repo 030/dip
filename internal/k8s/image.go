@@ -24,8 +24,8 @@ var (
 )
 
 type Images struct {
-	ToBeValidated map[string]interface{}
-	SlackToken    string
+	SlackChannelID, SlackToken string
+	ToBeValidated              map[string]interface{}
 }
 
 func inOrOutsideCluster(kubeconfig string) (*rest.Config, error) {
@@ -59,23 +59,22 @@ func authenticate() (*rest.Config, error) {
 	return config, nil
 }
 
-func (i *Images) checkIfOutdated(image, kind, name, namespace, tagString, containerImageWithoutTag, containerImageTagInsideCluster string) error {
-	latestTag, err := dockerhub.LatestTagBasedOnRegex(tagString, containerImageWithoutTag)
+func (i *Images) checkIfOutdatedAndSendMessageToSlackIfTrue(image, kind, name, namespace, regexToFindNewestTag, containerImageWithoutTag, containerImageTagInsideCluster string) error {
+	latestTag, err := dockerhub.LatestTagBasedOnRegex(regexToFindNewestTag, containerImageWithoutTag)
 	if err != nil {
 		return err
 	}
-	if latestTag != tagString {
+
+	log.Infof("%s %s", latestTag, containerImageTagInsideCluster)
+	if latestTag != containerImageTagInsideCluster {
 		msg := fmt.Sprintf("Image: '%s' with tag: '%s' in %s: '%s' in namespace: '%s' outdated. Latest tag: '%s'", image, containerImageTagInsideCluster, kind, name, namespace, latestTag)
-		if err := slack.SendMessage(msg, i.SlackToken); err != nil {
+		if err := slack.SendMessage(i.SlackChannelID, msg, i.SlackToken); err != nil {
 			return err
 		}
 
-		log.Warningf("image: '%s' outdated", image)
-		log.Info("other clusterImages:")
-		for _, clusterImage := range clusterImages {
-			log.Info(clusterImage)
-		}
-		return nil
+		// Ensure that only one outdated image is shown in Slack. This prevents
+		// that all images have to be updated right away
+		os.Exit(0)
 	}
 	return nil
 }
@@ -83,10 +82,11 @@ func (i *Images) checkIfOutdated(image, kind, name, namespace, tagString, contai
 func (i *Images) checkWhetherImagesAreUpToDate(containerImage, namespace, kind, name string) error {
 	clusterImages = append(clusterImages, containerImage)
 
-	images := i.ToBeValidated
-	for image, tag := range images {
-		tagString := fmt.Sprintf("%v", tag)
-		r := regexp.MustCompile("^(" + image + "):(" + tagString + ")")
+	imageNamesAndRegexToFindNewestTags := i.ToBeValidated
+	for imageName, regexToFindNewestTagInterface := range imageNamesAndRegexToFindNewestTags {
+		regexToFindNewestTag := regexToFindNewestTagInterface.(string)
+		log.Infof("regexToFindNewestTag: '%s'", regexToFindNewestTag)
+		r := regexp.MustCompile("^(" + imageName + "):(" + regexToFindNewestTag + ")")
 		if !r.MatchString(containerImage) {
 			log.Info("no match")
 			continue
@@ -98,8 +98,9 @@ func (i *Images) checkWhetherImagesAreUpToDate(containerImage, namespace, kind, 
 
 		containerImageWithoutTag := group[1]
 		containerImageTagInsideCluster := group[2]
+		log.Infof("containerImageWithoutTag: '%s', containerImageTagInsideCluster: '%s'", containerImageWithoutTag, containerImageTagInsideCluster)
 
-		return i.checkIfOutdated(image, kind, name, namespace, tagString, containerImageWithoutTag, containerImageTagInsideCluster)
+		return i.checkIfOutdatedAndSendMessageToSlackIfTrue(imageName, kind, name, namespace, regexToFindNewestTag, containerImageWithoutTag, containerImageTagInsideCluster)
 	}
 	return nil
 }
