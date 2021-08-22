@@ -3,22 +3,26 @@ package slack
 import (
 	"fmt"
 
-	sasm "github.com/030/sasm/pkg/slack"
 	log "github.com/sirupsen/logrus"
+	"github.com/slack-go/slack"
 )
 
-func SendMessage(msg, token string) error {
-	if token == "" || msg == "" {
-		return fmt.Errorf("slack_token or msg should not be empty")
+func SendMessage(channelID, msg, token string) error {
+	if channelID == "" || token == "" || msg == "" {
+		return fmt.Errorf("channelID, slack_token or msg should not be empty")
 	}
 
 	log.Info("Sending message to Slack...")
-	t := sasm.Text{Type: "mrkdwn", Text: msg}
-	b := []sasm.Blocks{{Type: "section", Text: &t}}
-	d := sasm.Data{Blocks: b, Channel: "#dip", Icon: ":dip:", Username: "dip"}
-
-	if err := d.PostMessage(token); err != nil {
+	api := slack.New(token)
+	channelID, timestamp, err := api.PostMessage(
+		channelID,
+		slack.MsgOptionText(msg, false),
+		slack.MsgOptionAsUser(true),
+	)
+	if err != nil {
 		return err
 	}
+	fmt.Printf("Message successfully sent to channel %s at %s", channelID, timestamp)
+
 	return nil
 }

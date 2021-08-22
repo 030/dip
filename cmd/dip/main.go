@@ -74,12 +74,17 @@ func k8sArgOption() error {
 			return err
 		}
 
+		channelID, err := slackChannelID()
+		if err != nil {
+			return err
+		}
+
 		images, err := imagesToBeValidated()
 		if err != nil {
 			return err
 		}
 
-		k := k8s.Images{ToBeValidated: images, SlackToken: token}
+		k := k8s.Images{ToBeValidated: images, SlackToken: token, SlackChannelID: channelID}
 		if err := k.UpToDate(); err != nil {
 			return err
 		}
@@ -142,12 +147,23 @@ func viperBase(path, filename string) error {
 	return nil
 }
 
-func slackToken() (string, error) {
+func credsValue(key string) (string, error) {
 	if err := viperBase(*config, "creds"); err != nil {
 		return "", err
 	}
-	slackToken := viper.GetString("slack_token")
-	return slackToken, nil
+	value := viper.GetString(key)
+	if value == "" {
+		return "", fmt.Errorf("no "+key+" found. Check whether the '"+key+"' variable is populated in '%s'", viper.ConfigFileUsed())
+	}
+	return value, nil
+}
+
+func slackToken() (string, error) {
+	return credsValue("slack_token")
+}
+
+func slackChannelID() (string, error) {
+	return credsValue("slack_channel_id")
 }
 
 func imagesToBeValidated() (map[string]interface{}, error) {
