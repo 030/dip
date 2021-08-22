@@ -26,7 +26,7 @@ func Check(tags []string) ([]string, error) {
 
 // toInt makes it possible to sort semnatic versions, i.e. the highest integer
 // represents the latest version
-func ToInt(tagWithoutChars string) (int, error) {
+func toInt(tagWithoutChars string) (int, error) {
 	semver := regexp.MustCompile(`\.`).Split(tagWithoutChars, 3)
 	major, err := strconv.Atoi(semver[0])
 	if err != nil {
@@ -60,18 +60,46 @@ func update(tag string) (int, error) {
 	return u, nil
 }
 
+func tagWithoutChars(semanticTag string) (int, error) {
+	log.Debugf("tag: '%v'", semanticTag)
+
+	re := regexp.MustCompile(`((\d+\.){2}\d+)`)
+	match := re.FindStringSubmatch(semanticTag)
+	if len(match) == 0 {
+		return 0, fmt.Errorf("no match was found. Verify whether the semanticTag: '%v' contains characters", semanticTag)
+	}
+	tagWithoutChars := match[1]
+	log.Debugf("tagWithoutChars: '%v'", tagWithoutChars)
+
+	version, err := toInt(tagWithoutChars)
+	if err != nil {
+		return 0, err
+	}
+	return version, nil
+}
+
+func sortAndGetLatestTag(m map[int]string) string {
+	latestTag := ""
+	log.Debugf("Map: '%v'", m)
+	keys := make([]int, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	log.Debugf("Sorted keys: '%v'", keys)
+
+	for i, k := range keys {
+		if i == len(keys)-1 {
+			latestTag = m[k]
+		}
+	}
+	return latestTag
+}
+
 func boo(semanticTags []string) (string, error) {
 	m := make(map[int]string)
-	latestTag := ""
 	for _, semanticTag := range semanticTags {
-		log.Debugf("tag: '%v'", semanticTag)
-
-		re := regexp.MustCompile(`((\d+\.){2}\d+)`)
-		match := re.FindStringSubmatch(semanticTag)
-		tagWithoutChars := match[1]
-		log.Debugf("tagWithoutChars: '%v'", tagWithoutChars)
-
-		version, err := ToInt(tagWithoutChars)
+		version, err := tagWithoutChars(semanticTag)
 		if err != nil {
 			return "", err
 		}
@@ -100,19 +128,7 @@ func boo(semanticTags []string) (string, error) {
 
 		m[version] = semanticTag
 	}
-	log.Debugf("Map: '%v'", m)
-	keys := make([]int, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
-	sort.Ints(keys)
-	log.Debugf("Sorted keys: '%v'", keys)
-
-	for i, k := range keys {
-		if i == len(keys)-1 {
-			latestTag = m[k]
-		}
-	}
+	latestTag := sortAndGetLatestTag(m)
 	return latestTag, nil
 }
 

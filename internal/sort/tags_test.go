@@ -15,7 +15,7 @@ func TestTags(t *testing.T) {
 	assert.Equal(t, exp, act)
 }
 
-func TestTags2(t *testing.T) {
+func TestTagsTwo(t *testing.T) {
 	exp := "5"
 	act, err := Tags([]string{"5", "4", "3", "2", "1"})
 	if err != nil {
@@ -30,7 +30,7 @@ func TestTagsError(t *testing.T) {
 	assert.EqualError(t, err, actualError)
 }
 
-func TestTagsError2(t *testing.T) {
+func TestTagsTwoError(t *testing.T) {
 	actualError := "tags should not be empty"
 	_, err := Tags([]string{})
 	assert.EqualError(t, err, actualError)

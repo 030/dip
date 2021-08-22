@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2021-08-22
+
+### Changed
+
+- go v16 to v17.1
+- use official go slack library
+
 ## [3.0.0] - 2021-08-16
 
 ### Changed
@@ -55,7 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Return latest tag.
 
-[Unreleased]: https://github.com/030/dip/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/030/dip/compare/3.0.1...HEAD
+[3.0.1]: https://github.com/030/dip/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/030/dip/compare/2.2.0...3.0.0
 [2.2.0]: https://github.com/030/dip/compare/2.1.6...2.2.0
 [2.1.6]: https://github.com/030/dip/compare/2.1.5...2.1.6

@@ -75,6 +75,7 @@ dip_images:
 and create a `~/.dip/creds.yml` file:
 
 ```bash
+slack_channel_id: someSlackChannelID
 slack_token: some-token
 ```
 
