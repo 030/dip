@@ -31,6 +31,12 @@ jobs:
       - name: Use the value
         run: |
           echo "${{ env.dip-deliverable }}"
+      - name: Check whether all versions have been updated
+        run: |
+          Version: ${{ github.ref }}
+          grep ${{ github.ref }} build/package/snap/snapcraft.yaml
+          grep ${{ github.ref }} deployments/k8s-and-openshift/deploy.yml
+          grep "dip:${{ github.ref }}" README.md
       - name: Create release
         run: ./scripts/build.sh
         env:
