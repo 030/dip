@@ -23,21 +23,19 @@ var (
 	Version                            string
 )
 
-func dockerfileTag(i string) (string, error) {
+func dockerfileTag(image string) (string, error) {
 	b, err := ioutil.ReadFile("Dockerfile")
 	if err != nil {
 		return "", err
 	}
-	r, err := regexp.Compile("FROM " + i + ":(.*)")
+	r, err := regexp.Compile("FROM " + image + ":(.*)")
 	if err != nil {
 		return "", err
 	}
 	if !r.Match(b) {
 		return "", fmt.Errorf("no match")
 	}
-	group := r.FindSubmatch(b)
-	log.Debugf("Dockerfile image: '%s' and tag: '%s'", i, string(group[1]))
-	return string(group[1]), nil
+	return string(r.FindSubmatch(b)[1]), nil
 }
 
 func dockerfileOption() error {
