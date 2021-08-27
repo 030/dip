@@ -34,8 +34,11 @@ jobs:
       - name: Check whether all versions have been updated
         run: |
           echo "Version: ${{ github.ref }}"
+          echo "Checking build/package/snap/snapcraft.yaml..."
           grep ${{ github.ref }} build/package/snap/snapcraft.yaml
+          echo "Checking deployments/k8s-and-openshift/deploy.yml..."
           grep ${{ github.ref }} deployments/k8s-and-openshift/deploy.yml
+          echo "Checking README.md..."
           grep "dip:${{ github.ref }}" README.md
       - name: Create release
         run: ./scripts/build.sh
