@@ -78,13 +78,19 @@ spec:
               args:
                 - -k8s
                 - -config
-                - /home/dip/.dip/config.yml
+                - /home/dip/.dip
               volumeMounts:
+                - name: dip-creds
+                  mountPath: /home/dip/.dip
+                  readOnly: true
                 - name: dip-config
                   mountPath: /home/dip/.dip
                   readOnly: true
           restartPolicy: OnFailure
           volumes:
-            - name: dip-config
+            - name: dip-creds
               secret:
-                secretName: dip-config
+                secretName: dip
+            - name: dip-config
+              configMap:
+                name: dip
