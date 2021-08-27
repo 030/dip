@@ -41,6 +41,7 @@ jobs:
           grep ${version} deployments/k8s-and-openshift/deploy.yml
           echo "Checking README.md..."
           grep "dip:${version}" README.md
+        if: ${{ startsWith(matrix.os, 'mac') || startsWith(matrix.os, 'ubuntu') }}
       - name: Create release
         run: ./scripts/build.sh
         env:
