@@ -10,7 +10,7 @@ RUN apk add curl git && \
     chmod +x user.sh && \
     ./user.sh
 
-FROM alpine:3.14.1
+FROM alpine:3.14.2
 ENV BIN=/usr/local/bin/
 ENV USERNAME=dip
 ENV BASE=/opt/${USERNAME}
