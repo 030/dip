@@ -80,8 +80,8 @@ spec:
                 - -config
                 - /home/dip/.dip
               volumeMounts:
-                - mountPath: /home/dip/.dip
-                  name: creds-and-config
+                - name: creds-and-config
+                  mountPath: /home/dip/.dip
                   readOnly: true
           restartPolicy: OnFailure
           volumes:
