@@ -80,16 +80,16 @@ spec:
                 - -config
                 - /home/dip/.dip
               volumeMounts:
-              - mountPath: /home/dip/.dip
-                name: creds-and-config
-                readOnly: true
+                - mountPath: /home/dip/.dip
+                  name: creds-and-config
+                  readOnly: true
           restartPolicy: OnFailure
           volumes:
-          - name: creds-and-config
-            projected:
-              defaultMode: 420
-              sources:
-              - secret:
-                  name: dip
-              - configMap:
-                  name: dip
+            - name: creds-and-config
+              projected:
+                defaultMode: 420
+                sources:
+                  - secret:
+                      name: dip
+                  - configMap:
+                      name: dip
