@@ -96,7 +96,7 @@ func sortAndGetLatestTag(m map[int]string) string {
 	return latestTag
 }
 
-func boo(semanticTags []string) (string, error) {
+func latestTagBasedOnUpdateNumber(semanticTags []string) (string, error) {
 	m := make(map[int]string)
 	for _, semanticTag := range semanticTags {
 		version, err := tagWithoutChars(semanticTag)
@@ -144,5 +144,5 @@ func Latest(tags []string) (string, error) {
 	if len(semanticTags) == 0 {
 		log.Debug("No semantic tags found")
 	}
-	return boo(semanticTags)
+	return latestTagBasedOnUpdateNumber(semanticTags)
 }
