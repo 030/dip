@@ -48,7 +48,7 @@ func tagFromJSON(b []byte) []string {
 	return tagsFromJSON
 }
 
-func bla(latest string) (string, error) {
+func checkForEachTagWhetherItMatchesTheRegexSortItAndReturnLatestTag(latest string) (string, error) {
 	r, err := regexp.Compile(latest)
 	if err != nil {
 		return "", err
@@ -91,7 +91,7 @@ func LatestTagBasedOnRegex(regex, image string) (string, error) {
 	log.Debug(len(tags))
 	log.Debugf("Regex: '%s'", regex)
 
-	return bla(regex)
+	return checkForEachTagWhetherItMatchesTheRegexSortItAndReturnLatestTag(regex)
 }
 
 func semantic(tag string) (bool, error) {
