@@ -83,18 +83,30 @@ or for k8s:
 
 ```bash
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
-  name: dip-config
+  name: dip
   namespace: dip
-stringData:
+data:
   config.yml: |-
     ---
     dip_images:
       docker.io/alpine: 3\.[0-9]+\.[0-9]+
       elastic/elasticsearch: 7\.[0-9]+\.[0-9]+
+```
+
+and
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dip
+  namespace: dip
+stringData:
   creds.yml: |-
     ---
+    slack_channel_id: some-id
     slack_token: some-token
 ```
 
