@@ -47,13 +47,15 @@ func toInt(tagWithoutChars string) (int, error) {
 func update(tag string) (int, error) {
 	re := regexp.MustCompile(`(_|-\w+\d\.)(\d+)`)
 	match := re.FindStringSubmatch(tag)
+	log.Debugf("match elements: '%s'", match)
 	elements := len(match)
-	if elements != 2 {
-		log.Debugf("Cannot determine update number. Required elements is two, but was: '%d'", elements)
+	if elements != 3 {
+		log.Debugf("Cannot determine update number. Required elements is three, but was: '%d'", elements)
 		return 0, nil
 	}
 	updateString := match[2]
 	u, err := strconv.Atoi(updateString)
+	log.Debugf("Update number: '%d'", u)
 	if err != nil {
 		return 0, err
 	}

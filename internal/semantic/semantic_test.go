@@ -47,3 +47,21 @@ func TestSortAndGetLatestTag(t *testing.T) {
 	exp := "boo"
 	assert.Equal(t, exp, act)
 }
+
+func TestUpdateJava(t *testing.T) {
+	exp := 9
+	act, err := update("16.0.1_9-jre-hotspot-focal")
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, exp, act)
+}
+
+func TestUpdateGolangAlpine(t *testing.T) {
+	exp := 14
+	act, err := update("1.17.0-alpine3.14")
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, exp, act)
+}
