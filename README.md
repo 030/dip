@@ -25,6 +25,20 @@
 
 Docker Image Patrol (DIP) keeps docker images up-to-date.
 
+## Development
+
+### Dependencies
+
+In order to update, remove the last require section in the go.mod and de k8s
+libraries from the first require block and run:
+
+```bash
+go get github.com/openshift/client-go@release-4.8
+```
+
+Once run, the compatible k8s version should be added and it should be possible
+to build the app.
+
 ## Installation
 
 Keep Docker Images Up To Date (KDIUTD)
