@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/030/dip/internal/gitactions"
 	"github.com/030/dip/internal/k8s"
 	"github.com/030/dip/pkg/dockerhub"
 	"github.com/mitchellh/go-homedir"
@@ -82,7 +83,17 @@ func k8sArgOption() error {
 			return err
 		}
 
-		k := k8s.Images{ToBeValidated: images, SlackToken: token, SlackChannelID: channelID}
+		gitUser, err := gitUser()
+		if err != nil {
+			return err
+		}
+		gitPass, err := gitPass()
+		if err != nil {
+			return err
+		}
+
+		g := gitactions.Elements{User: gitUser, Pass: gitPass}
+		k := k8s.Images{ToBeValidated: images, SlackToken: token, SlackChannelID: channelID, Elements: g}
 		if err := k.UpToDate(); err != nil {
 			return err
 		}
@@ -164,11 +175,20 @@ func slackChannelID() (string, error) {
 	return credsValue("slack_channel_id")
 }
 
+func gitUser() (string, error) {
+	return credsValue("git_user")
+}
+
+func gitPass() (string, error) {
+	return credsValue("git_pass")
+}
+
 func imagesToBeValidated() (map[string]interface{}, error) {
 	if err := viperBase(*config, "config"); err != nil {
 		return nil, err
 	}
 	images := viper.GetStringMap("dip_images")
+	log.Debugf("dip_images: '%s'", images)
 	if len(images) == 0 {
 		return nil, fmt.Errorf("no images found. Check whether the 'dip_images' variable is populated in '%s'", viper.ConfigFileUsed())
 	}
@@ -176,6 +196,8 @@ func imagesToBeValidated() (map[string]interface{}, error) {
 }
 
 func main() {
+	log.SetReportCaller(true)
+
 	config = flag.String("config", "", "the file path that contains the configuration")
 	debug = flag.Bool("debug", false, "Whether debug mode should be enabled.")
 	dockerfile = flag.Bool("dockerfile", false, "Whether dockerfile should be checked.")
