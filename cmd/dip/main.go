@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -18,10 +19,51 @@ import (
 const ext = "yml"
 
 var (
-	debug, dockerfile, k8sArg, version *bool
-	config, image, latest              *string
-	Version                            string
+	debug, dockerfile, k8sArg, k8sfile, version *bool
+	config, image, latest                       *string
+	Version                                     string
 )
+
+var bla = make(map[string][]byte)
+
+func walk(s string, d fs.DirEntry, err error) error {
+	if err != nil {
+		return err
+	}
+	if !d.IsDir() {
+		ext := filepath.Ext(s)
+		if (ext == ".yml") || (ext == ".yaml") {
+			b, err := ioutil.ReadFile(s)
+			if err != nil {
+				return err
+			}
+			bla[s] = b
+		}
+	}
+	return nil
+}
+
+func k8sfileTag(image string) (string, error) {
+	if err := filepath.WalkDir(".", walk); err != nil {
+		return "", err
+	}
+
+	tag := ""
+	for s, b := range bla {
+		r, err := regexp.Compile(`image: ` + image + `:([a-z0-9\.]+)`)
+		if err != nil {
+			return "", err
+		}
+		if !r.Match(b) {
+			log.Debugf("Image: '%s' not found in k8sfile: '%s'", image, s)
+		} else {
+			tag = string(r.FindSubmatch(b)[1])
+			log.Infof("Image: '%s' tag: '%s' found in k8sfile: '%s'", image, tag, s)
+		}
+	}
+
+	return tag, nil
+}
 
 func dockerfileTag(image string) (string, error) {
 	b, err := ioutil.ReadFile("Dockerfile")
@@ -38,13 +80,7 @@ func dockerfileTag(image string) (string, error) {
 	return string(r.FindSubmatch(b)[1]), nil
 }
 
-func dockerfileOption() error {
-	latestTag, err := dockerhub.LatestTagBasedOnRegex(*latest, *image)
-	if err != nil {
-		return err
-	}
-	fmt.Println(latestTag)
-
+func dockerfileOption(latestTag string) error {
 	if *dockerfile {
 		dft, err := dockerfileTag(*image)
 		if err != nil {
@@ -54,6 +90,20 @@ func dockerfileOption() error {
 			return fmt.Errorf("dockerfile tag: '%s' seems to be outdated, as: '%s' exists. Please update the tag in the Dockerfile", dft, latestTag)
 		}
 		log.Infof("Dockerfile tag: '%s' is up to date. Latest: '%v'", dft, latestTag)
+	}
+	return nil
+}
+
+func k8sfileOption(latestTag string) error {
+	if *k8sfile {
+		dft, err := k8sfileTag(*image)
+		if err != nil {
+			return err
+		}
+		if latestTag != dft {
+			return fmt.Errorf("k8sfile tag: '%s' seems to be outdated, as: '%s' exists. Please update the tag in the k8sfile", dft, latestTag)
+		}
+		log.Infof("k8sfile tag: '%s' is up to date. Latest: '%v'", dft, latestTag)
 	}
 	return nil
 }
@@ -118,7 +168,16 @@ func options() error {
 
 	versionOption()
 
-	if err := dockerfileOption(); err != nil {
+	latestTag, err := dockerhub.LatestTagBasedOnRegex(*latest, *image)
+	if err != nil {
+		return err
+	}
+	fmt.Println(latestTag)
+
+	if err := dockerfileOption(latestTag); err != nil {
+		return err
+	}
+	if err := k8sfileOption(latestTag); err != nil {
 		return err
 	}
 
@@ -181,6 +240,7 @@ func main() {
 	dockerfile = flag.Bool("dockerfile", false, "Whether dockerfile should be checked.")
 	image = flag.String("image", "", "Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.")
 	k8sArg = flag.Bool("k8s", false, "Whether images are up to date in a k8s or openshift cluster.")
+	k8sfile = flag.Bool("k8sfile", false, "Whether k8sfiles should be checked.")
 	latest = flag.String("latest", "", "The regex to get the latest tag, e.g. \"xenial-\\d.*\".")
 	version = flag.Bool("version", false, "The version of DIP.")
 
