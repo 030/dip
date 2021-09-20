@@ -1,0 +1,15 @@
+name: "DIP"
+on: [push]
+jobs:
+  dive:
+    runs-on: ubuntu-latest
+    name: Check whether images are up-to-date
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build DIP
+        run: cd cmd/dip && go build && mv dip ../.. && cd ../..
+      - name: Check Alpine
+        run: ./dip image --name=alpine --regex=^3\.[0-9]+\.[0-9]+$ --dockerfile
+      - name: Check Golang
+        run: ./dip image --name=golang --regex=^1\.[0-9]+\.[0-9]+-alpine3\.[0-9]+$ --dockerfile

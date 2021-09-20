@@ -64,7 +64,7 @@ spec:
           serviceAccountName: dip
           containers:
             - name: dip
-              image: utrecht/dip:3.0.3
+              image: utrecht/dip:4.0.0
               resources:
                 limits:
                   memory: "64Mi"
@@ -76,9 +76,10 @@ spec:
               command:
                 - dip
               args:
-                - -k8s
-                - -config
+                - image
+                - --configCredHome
                 - /home/dip/.dip
+                - --kubernetes
               volumeMounts:
                 - name: creds-and-config
                   mountPath: /home/dip/.dip
