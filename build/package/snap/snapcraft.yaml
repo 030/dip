@@ -32,4 +32,4 @@ parts:
       mv dip-ubuntu-20.04 dip
       chmod +x ./dip
       ./dip --version |\
-         grep "^refs/tags/${SNAPCRAFT_PROJECT_VERSION}$"
+         grep "^dip version refs/tags/${SNAPCRAFT_PROJECT_VERSION}$"
