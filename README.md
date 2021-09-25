@@ -36,19 +36,19 @@ sudo snap install kdiutd
 ## Usage
 
 ```bash
-Usage of ./dip:
-  -debug
-        Whether debug mode should be enabled.
-  -dockerfile
-        Whether dockerfile should be checked.
-  -image string
-        Find an image on dockerhub, e.g. nginx:1.17.5-alpine or nginx.
-  -k8s
-        Whether images are up to date in a k8s or openshift cluster.
-  -latest string
-        The regex to get the latest tag, e.g. "xenial-\d.*".
-  -version
-        The version of DIP.
+Usage:
+  dip image [flags]
+
+Flags:
+      --dockerfile     Check whether the image that resides in the Dockerfile is outdated
+  -h, --help           help for image
+  -n, --name string    Name of the Docker image to be checked whether it is up to date
+  -r, --regex string   Regex for finding the latest image tag
+      --sendSlackMsg   Send message to Slack
+
+Global Flags:
+      --configCredHome string   config and cred file home directory (default is $HOME/.dip)
+      --debug                   debugging mode
 ```
 
 ## k8s
@@ -110,48 +110,51 @@ stringData:
     slack_token: some-token
 ```
 
+Note: follow these steps to create
+[a Slack Token](https://github.com/030/sasm#create-a-slack-token).
+
 ## latest
 
 ### alpine
 
 ```bash
-./dip -image alpine -latest "(\d+\.){2}\d"
+dip image --name=alpine --regex="(\d+\.){2}\d"
 ```
 
 ### minio
 
 ```bash
-./dip -image minio/minio -latest "RELEASE\.2019.*"
+dip image --name=minio/minio --regex="RELEASE\.2019.*"
 ```
 
 ### nexus
 
 ```bash
-./dip -image sonatype/nexus3 -latest "(\d+\.){2}\d"
+dip image --name=sonatype/nexus3 --regex="(\d+\.){2}\d"
 ```
 
 ### nginx
 
 ```bash
-./dip -image nginx -latest ".*(\d+\.){2}\d-alpine$"
+dip image --name=nginx --regex=".*(\d+\.){2}\d-alpine$"
 ```
 
 ### sonarqube
 
 ```bash
-./dip -image sonarqube -latest ".*-community$"
+dip image --name=sonarqube --regex=".*-community$"
 ```
 
 ### traefik
 
 ```bash
-./dip --image=traefik --latest="^v(\d+\.){1,2}\d+$"
+dip image --name=traefik --regex="^v(\d+\.){1,2}\d+$"
 ```
 
 ### ubuntu
 
 ```bash
-./dip -image ubuntu -latest "^xenial.*"
+dip image --name=ubuntu --regex="^xenial.*"
 ```
 
 ## dockerfile
@@ -163,13 +166,13 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 ### golang
 
 ```bash
-./dip -image=golang -latest="([0-9]+\.){2}[0-9]+$" -dockerfile
+dip image --name=golang --regex="([0-9]+\.){2}[0-9]+$" -dockerfile
 ```
 
 ### adoptopenjdk
 
 ```bash
-./dip -image=adoptopenjdk -latest="14.*-jre-hotspot-bionic" -dockerfile
+dip image --name=adoptopenjdk --regex="14.*-jre-hotspot-bionic" -dockerfile
 ```
 
 ## docker
@@ -177,7 +180,7 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 [![dockeri.co](https://dockeri.co/image/utrecht/dip)](https://hub.docker.com/r/utrecht/dip)
 
 ```bash
-docker run utrecht/dip:3.0.3 dip -image=grafana/grafana -latest=^7\.5\.7$
+docker run utrecht/dip:4.0.0 dip image --name=grafana/grafana --regex=^7\.5\.7$
 ```
 
 will return:
