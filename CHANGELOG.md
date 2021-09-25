@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Check whether image in Dockerfile is outdated.
+- Send a message to Slack if Dockerfile contains an outdated image.
 
 ### Changed
 
