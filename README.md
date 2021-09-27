@@ -166,13 +166,13 @@ the pipeline will fail as an exit 1 is returned if an image is outdated.
 ### golang
 
 ```bash
-dip image --name=golang --regex="([0-9]+\.){2}[0-9]+$" -dockerfile
+dip image --name=golang --regex="([0-9]+\.){2}[0-9]+$" --dockerfile
 ```
 
 ### adoptopenjdk
 
 ```bash
-dip image --name=adoptopenjdk --regex="14.*-jre-hotspot-bionic" -dockerfile
+dip image --name=adoptopenjdk --regex="14.*-jre-hotspot-bionic" --dockerfile
 ```
 
 ## docker
