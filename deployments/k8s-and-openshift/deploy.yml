@@ -64,7 +64,7 @@ spec:
           serviceAccountName: dip
           containers:
             - name: dip
-              image: utrecht/dip:4.0.2
+              image: utrecht/dip:4.0.1
               resources:
                 limits:
                   memory: '64Mi'
