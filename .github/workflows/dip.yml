@@ -1,4 +1,4 @@
-name: "DIP"
+name: 'DIP'
 on: [push]
 jobs:
   dive:
@@ -17,5 +17,3 @@ jobs:
         run: ./dip image --name=alpine --regex=^3\.[0-9]+\.[0-9]+$ --dockerfile
       - name: Check Golang
         run: ./dip image --name=golang --regex=^1\.[0-9]+\.[0-9]+-alpine3\.[0-9]+$ --dockerfile
-      - name: Check for outdated images in k8sfiles
-        run: ./dip image --name utrecht/dip --regex=^[0-9]+\.[0-9]+\.[0-9]+$ --k8sfile
