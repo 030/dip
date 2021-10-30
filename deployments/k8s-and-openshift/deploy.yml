@@ -16,7 +16,7 @@ metadata:
   name: dip
 rules:
   - apiGroups:
-      - ""
+      - ''
     resources:
       - namespaces
     verbs:
@@ -55,7 +55,7 @@ metadata:
   name: dip
   namespace: dip
 spec:
-  schedule: "0 0 * * *"
+  schedule: '0 0 * * *'
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -64,14 +64,14 @@ spec:
           serviceAccountName: dip
           containers:
             - name: dip
-              image: utrecht/dip:4.0.1
+              image: utrecht/dip:4.0.2
               resources:
                 limits:
-                  memory: "64Mi"
-                  cpu: "25m"
+                  memory: '64Mi'
+                  cpu: '25m'
                 requests:
-                  memory: "4Mi"
-                  cpu: "5m"
+                  memory: '4Mi'
+                  cpu: '5m'
               imagePullPolicy: IfNotPresent
               command:
                 - dip
