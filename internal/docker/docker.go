@@ -2,14 +2,14 @@ package docker
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func fileTag(image string) (string, error) {
-	b, err := ioutil.ReadFile("Dockerfile")
+	b, err := os.ReadFile("Dockerfile")
 	if err != nil {
 		return "", err
 	}
@@ -33,4 +33,23 @@ func FileLatest(image, latestTag string) error {
 	}
 	log.Infof("Dockerfile tag: '%s' is up to date. Latest: '%v'", dft, latestTag)
 	return err
+}
+
+func UpdateFROMStatementDockerfile(image, latestTag string) error {
+	log.Infof("Updating FROM statement in the Dockerfile")
+	b, err := os.ReadFile("Dockerfile")
+	if err != nil {
+		return err
+	}
+
+	re, err := regexp.Compile(`FROM ` + image + `:([a-z0-9\.-]+)`)
+	if err != nil {
+		return err
+	}
+	replaced := re.ReplaceAll(b, []byte(`FROM `+image+`:`+latestTag+`${2}`))
+	if err = os.WriteFile("Dockerfile", replaced, 0644); err != nil {
+		return err
+	}
+
+	return nil
 }
