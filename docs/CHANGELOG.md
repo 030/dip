@@ -7,12 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [4.0.3] - 2022-08-24
+## [4.1.0] - 2022-08-19
 
-- Updated to Go 1.19
-- Updated libraries
-- Replaced [deprecated](https://pkg.go.dev/io/ioutil#ReadFile) ioutil
-- Added `--updateDockerfile` parameter
+### Added
+
+- `--updateDockerfile` parameter by [@rvanbutselaar](https://github.com/rvanbutselaar).
+
+### Changed
+
+- location of CHANGELOG.md to `docs` directory.
+
+### Replaced
+
+- [deprecated](https://pkg.go.dev/io/ioutil#ReadFile) ioutil by [@rvanbutselaar](https://github.com/rvanbutselaar).
+
+### Updated
+
+- various libraries by [@rvanbutselaar](https://github.com/rvanbutselaar).
+- Go to 1.19 by [@rvanbutselaar](https://github.com/rvanbutselaar).
+- Golang version in GitHub actions to same version.
+- DIP version in snapcraft and README to 4.1.0.
 
 ## [4.0.2] - 2021-10-30
 
@@ -103,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Return latest tag.
 
-[Unreleased]: https://github.com/030/dip/compare/4.0.2...HEAD
+[Unreleased]: https://github.com/030/dip/compare/4.1.0...HEAD
+[4.1.0]: https://github.com/030/dip/compare/4.0.2...4.1.0
 [4.0.2]: https://github.com/030/dip/compare/4.0.1...4.0.2
 [4.0.1]: https://github.com/030/dip/compare/4.0.0...4.0.1
 [4.0.0]: https://github.com/030/dip/compare/3.0.3...4.0.0
