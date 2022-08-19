@@ -199,3 +199,9 @@ inside a Dockerfile.
 ```bash
 dip image --name=golang --regex="([0-9]+\.){2}[0-9]+$" --updateDockerfile
 ```
+
+### golang alpine builder
+
+```bash
+dip image --name=golang --regex="^([0-9]+\.){2}[0-9]-alpine([0-9]+\.)[0-9]{2}$" --updateDockerfile
+```
