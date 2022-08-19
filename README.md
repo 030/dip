@@ -188,3 +188,20 @@ will return:
 ```bash
 7.5.7
 ```
+
+## updateDockerfile
+
+Use the `--updateDockerfile` to check and update the image that is defined in the `FROM`
+inside a Dockerfile.
+
+### golang
+
+```bash
+dip image --name=golang --regex="([0-9]+\.){2}[0-9]+$" --updateDockerfile
+```
+
+### golang alpine builder
+
+```bash
+dip image --name=golang --regex="^([0-9]+\.){2}[0-9]-alpine([0-9]+\.)[0-9]{2}$" --updateDockerfile
+```
