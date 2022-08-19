@@ -29,7 +29,9 @@ to quickly create a Cobra application.`,
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Printf("Latest available tag on Dockerhub: '%s'\n", latestTag)
+
+			// fmt is used to ensure that only the tag is returned
+			fmt.Println(latestTag)
 
 			channelID := ""
 			token := ""
@@ -60,8 +62,7 @@ to quickly create a Cobra application.`,
 			}
 
 			if updateDockerfile {
-				err := docker.UpdateFROMStatementDockerfile(name, latestTag)
-				if err != nil {
+				if err := docker.UpdateFROMStatementDockerfile(name, latestTag); err != nil {
 					log.Fatal(err)
 				}
 			}
