@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	dockerfile, k8sfile, kubernetes, sendSlackMsg bool
-	name, regex                                   string
-	imageCmd                                      = &cobra.Command{
+	dockerfile, k8sfile, kubernetes, sendSlackMsg, updateDockerfile bool
+	name, regex                                                     string
+	imageCmd                                                        = &cobra.Command{
 		Use:   "image",
 		Short: "A brief description of your command",
 		Long: `A longer description that spans multiple lines and likely contains examples
@@ -29,6 +29,8 @@ to quickly create a Cobra application.`,
 			if err != nil {
 				log.Fatal(err)
 			}
+
+			// fmt is used to ensure that only the tag is returned
 			fmt.Println(latestTag)
 
 			channelID := ""
@@ -55,7 +57,12 @@ to quickly create a Cobra application.`,
 							log.Fatal(err)
 						}
 					}
+					log.Fatal(err)
+				}
+			}
 
+			if updateDockerfile {
+				if err := docker.UpdateFROMStatementDockerfile(name, latestTag); err != nil {
 					log.Fatal(err)
 				}
 			}
@@ -103,4 +110,5 @@ func init() {
 	imageCmd.Flags().BoolVar(&k8sfile, "k8sfile", false, "Check whether the images that resides in the k8sfiles are outdated")
 	imageCmd.Flags().BoolVar(&kubernetes, "kubernetes", false, "Check whether the image in a k8s file is outdated")
 	imageCmd.Flags().BoolVar(&sendSlackMsg, "sendSlackMsg", false, "Send message to Slack")
+	imageCmd.Flags().BoolVar(&updateDockerfile, "updateDockerfile", false, "Update the FROM image that resides in the Dockerfile")
 }

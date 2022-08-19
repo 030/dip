@@ -1,4 +1,4 @@
-FROM golang:1.17.2-alpine3.14 as builder
+FROM golang:1.19.0-alpine3.16 as builder
 ENV USERNAME=dip
 ENV BASE=/opt/${USERNAME}
 COPY . ./${USERNAME}/
@@ -10,7 +10,7 @@ RUN apk add curl git && \
     chmod +x user.sh && \
     ./user.sh
 
-FROM alpine:3.14.2
+FROM alpine:3.16.2
 ENV BIN=/usr/local/bin/
 ENV USERNAME=dip
 ENV BASE=/opt/${USERNAME}
