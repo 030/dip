@@ -2,7 +2,7 @@ package k8s
 
 import (
 	"io/fs"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 
@@ -18,7 +18,7 @@ func walk(s string, d fs.DirEntry, err error) error {
 	if !d.IsDir() {
 		ext := filepath.Ext(s)
 		if (ext == ".yml") || (ext == ".yaml") {
-			b, err := ioutil.ReadFile(s)
+			b, err := os.ReadFile(s)
 			if err != nil {
 				return err
 			}
