@@ -47,7 +47,7 @@ func UpdateFROMStatementDockerfile(image, latestTag string) error {
 		return err
 	}
 	replaced := re.ReplaceAll(b, []byte(`FROM `+image+`:`+latestTag+`${2}`))
-	if err = os.WriteFile("Dockerfile", replaced, 0644); err != nil {
+	if err := os.WriteFile("Dockerfile", replaced, 0644); err != nil {
 		return err
 	}
 
