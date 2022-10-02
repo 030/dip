@@ -1,5 +1,6 @@
-name: "Dive CI"
-on: [push]
+---
+name: 'Dive CI'
+'on': [push]
 jobs:
   dive:
     runs-on: ubuntu-latest

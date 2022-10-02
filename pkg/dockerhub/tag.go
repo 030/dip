@@ -93,11 +93,3 @@ func LatestTagBasedOnRegex(regex, image string) (string, error) {
 
 	return checkForEachTagWhetherItMatchesTheRegexSortItAndReturnLatestTag(regex)
 }
-
-func semantic(tag string) (bool, error) {
-	matched, err := regexp.Match("^([0-9]+\\.){2}[0-9]+", []byte(tag))
-	if err != nil {
-		return false, err
-	}
-	return matched, nil
-}
