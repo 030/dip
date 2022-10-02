@@ -1,5 +1,6 @@
-name: "Dockle"
-on: [push]
+---
+name: 'Dockle'
+'on': [push]
 jobs:
   dive:
     runs-on: ubuntu-latest

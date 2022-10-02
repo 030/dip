@@ -13,11 +13,12 @@ import (
 func Check(tags []string) ([]string, error) {
 	var semanticTags []string
 	for _, tag := range tags {
-		matched, err := regexp.Match("^v?([0-9]+\\.){2}[0-9]+", []byte(tag))
+		r, err := regexp.Compile(`^v?([0-9]+\.){2}[0-9]+`)
 		if err != nil {
 			return nil, err
 		}
-		if matched {
+
+		if r.MatchString(tag) {
 			semanticTags = append(semanticTags, tag)
 		}
 	}

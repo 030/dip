@@ -3,8 +3,6 @@
 source ./scripts/build.sh
 cd cmd/dip
 
-readonly DIP_ERROR="Cannot find the latest tag. Check whether the tags are semantic"
-
 echo -e "\nAdoptopenjdk"
 ./"${DIP_DELIVERABLE}" image --name=adoptopenjdk --regex="14.*-jre-hotspot-bionic" | grep "[0-9]"
 
