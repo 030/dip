@@ -45,6 +45,8 @@ jobs:
           sed -i "s|^\(version: \)\([0-9]\+\.\)\{2\}[0-9]\+|\1${tag}|" build/package/snap/snapcraft.yaml
           echo "Checking README.md..."
           sed -i "s|\(dip:\)\([0-9]\+\.\)\{2\}[0-9]\+|\1${tag}|" README.md
+          echo "Checking deployments/k8s-and-openshift/deploy.yml..."
+          sed -i "s|\(dip:\)\([0-9]\+\.\)\{2\}[0-9]\+|\1${tag}|" deployments/k8s-and-openshift/deploy.yml
       - uses: EndBug/add-and-commit@v9
         with:
           author_name: github-actions[bot]
