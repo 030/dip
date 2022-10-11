@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
-
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	jww "github.com/spf13/jwalterweatherman"
 	"github.com/spf13/viper"
 )

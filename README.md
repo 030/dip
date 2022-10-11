@@ -22,8 +22,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/030/dip.svg)
 ![Release date](https://img.shields.io/github/release-date/030/dip.svg)
 ![Latest Production Release Version](https://img.shields.io/github/release/030/dip.svg)
-
-<!-- [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=bugs)](https://sonarcloud.io/dashboard?id=030_dip)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=bugs)](https://sonarcloud.io/dashboard?id=030_dip)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=code_smells)](https://sonarcloud.io/dashboard?id=030_dip)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=coverage)](https://sonarcloud.io/dashboard?id=030_dip)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=030_dip)
@@ -33,8 +32,7 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=030_dip)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=security_rating)](https://sonarcloud.io/dashboard?id=030_dip)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=sqale_index)](https://sonarcloud.io/dashboard?id=030_dip)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=vulnerabilities)]\
-(https://sonarcloud.io/dashboard?id=030_dip) -->
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=030_dip&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=030_dip)
 
 <!-- [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2810/badge)]\
 (https://bestpractices.coreinfrastructure.org/projects/2810)  -->
@@ -216,7 +214,7 @@ dip image --name=adoptopenjdk --regex="14.*-jre-hotspot-bionic" --dockerfile
 [![dockeri.co](https://dockeri.co/image/utrecht/dip)](https://hub.docker.com/r/utrecht/dip)
 
 ```bash
-docker run utrecht/dip:4.1.1 dip image --name=grafana/grafana --regex=^7\.5\.7$
+docker run utrecht/dip:4.2.0 dip image --name=grafana/grafana --regex=^7\.5\.7$
 ```
 
 will return:
@@ -234,4 +232,10 @@ the `FROM` inside a Dockerfile.
 
 ```bash
 dip image --name=golang --regex="^([0-9]+\.){2}[0-9]-alpine([0-9]+\.)[0-9]{2}$" --updateDockerfile
+```
+
+## quay
+
+```bash
+dip image --name=prometheus/prometheus --regex="^v2(\.[0-9]+){2}$" --quayIo
 ```
