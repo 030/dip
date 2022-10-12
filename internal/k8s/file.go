@@ -18,7 +18,7 @@ func walk(s string, d fs.DirEntry, err error) error {
 	if !d.IsDir() {
 		ext := filepath.Ext(s)
 		if (ext == ".yml") || (ext == ".yaml") {
-			b, err := os.ReadFile(s)
+			b, err := os.ReadFile(filepath.Clean(s))
 			if err != nil {
 				return err
 			}

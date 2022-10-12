@@ -2,9 +2,17 @@
 ## [Unreleased]
 
 
+<a name="4.2.0"></a>
+## [4.2.0] - 2022-10-11
+### Feat
+- **quay:** Return latest tag based on a regex.
+
+
 <a name="4.1.1"></a>
 ## [4.1.1] - 2022-10-02
 ### Build
+- **deps:** Do not forget to update version in k8s deploy.
+- **deps:** Update versions.
 - **deps:** Add auto updater that creates a PR.
 
 
@@ -104,7 +112,8 @@
 <a name="1.0.0"></a>
 ## 1.0.0 - 2019-11-05
 
-[Unreleased]: https://github.com/030/dip/compare/4.1.1...HEAD
+[Unreleased]: https://github.com/030/dip/compare/4.2.0...HEAD
+[4.2.0]: https://github.com/030/dip/compare/4.1.1...4.2.0
 [4.1.1]: https://github.com/030/dip/compare/4.1.0...4.1.1
 [4.1.0]: https://github.com/030/dip/compare/4.0.2...4.1.0
 [4.0.2]: https://github.com/030/dip/compare/4.0.1...4.0.2

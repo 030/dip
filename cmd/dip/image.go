@@ -6,6 +6,7 @@ import (
 
 	"github.com/030/dip/internal/docker"
 	"github.com/030/dip/internal/k8s"
+	"github.com/030/dip/internal/quay"
 	"github.com/030/dip/internal/slack"
 	"github.com/030/dip/pkg/dockerhub"
 	log "github.com/sirupsen/logrus"
@@ -13,9 +14,9 @@ import (
 )
 
 var (
-	dockerfile, k8sfile, kubernetes, sendSlackMsg, updateDockerfile bool
-	name, regex                                                     string
-	imageCmd                                                        = &cobra.Command{
+	dockerfile, k8sfile, kubernetes, quayIo, sendSlackMsg, updateDockerfile bool
+	name, regex                                                             string
+	imageCmd                                                                = &cobra.Command{
 		Use:   "image",
 		Short: "A brief description of your command",
 		Long: `A longer description that spans multiple lines and likely contains examples
@@ -25,7 +26,13 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			latestTag, err := dockerhub.LatestTagBasedOnRegex(regex, name)
+			var err error
+			latestTag := ""
+			if quayIo {
+				latestTag, err = quay.LatestTagBasedOnRegex(regex, name)
+			} else {
+				latestTag, err = dockerhub.LatestTagBasedOnRegex(regex, name)
+			}
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -109,6 +116,7 @@ func init() {
 	imageCmd.Flags().BoolVar(&dockerfile, "dockerfile", false, "Check whether the image that resides in the Dockerfile is outdated")
 	imageCmd.Flags().BoolVar(&k8sfile, "k8sfile", false, "Check whether the images that resides in the k8sfiles are outdated")
 	imageCmd.Flags().BoolVar(&kubernetes, "kubernetes", false, "Check whether the image in a k8s file is outdated")
+	imageCmd.Flags().BoolVar(&quayIo, "quayIo", false, "Check the latest tag on quay.io")
 	imageCmd.Flags().BoolVar(&sendSlackMsg, "sendSlackMsg", false, "Send message to Slack")
 	imageCmd.Flags().BoolVar(&updateDockerfile, "updateDockerfile", false, "Update the FROM image that resides in the Dockerfile")
 }
