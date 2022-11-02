@@ -14,7 +14,7 @@
 
 {{ range .Versions }}
 <a name="{{ .Tag.Name }}"></a>
-## {{ if .Tag.Previous }}[{{ .Tag.Name }}]{{ else }}{{ .Tag.Name }}{{ end }} - {{ datetime "2006-01-02" .Tag.Date }}
+## {{ if .Tag.Previous }}[{{ .Tag.Name }}]{{ else }}{{ .Tag.Name }}{{ end }} - {{ ternary now .Tag.Date (eq (.Tag.Date | datetime "2006") "0001") | datetime "2006-01-02" }}
 {{ range .CommitGroups -}}
 ### {{ .Title }}
 {{ range .Commits -}}
