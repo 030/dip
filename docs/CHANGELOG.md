@@ -2,8 +2,11 @@
 ## [Unreleased]
 
 
+<a name="4.2.1"></a>
+## [4.2.1] - 0001-01-01
+
 <a name="4.2.0"></a>
-## [4.2.0] - 2022-10-11
+## [4.2.0] - 2022-10-12
 ### Feat
 - **quay:** Return latest tag based on a regex.
 
@@ -112,7 +115,8 @@
 <a name="1.0.0"></a>
 ## 1.0.0 - 2019-11-05
 
-[Unreleased]: https://github.com/030/dip/compare/4.2.0...HEAD
+[Unreleased]: https://github.com/030/dip/compare/4.2.1...HEAD
+[4.2.1]: https://github.com/030/dip/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/030/dip/compare/4.1.1...4.2.0
 [4.1.1]: https://github.com/030/dip/compare/4.1.0...4.1.1
 [4.1.0]: https://github.com/030/dip/compare/4.0.2...4.1.0
