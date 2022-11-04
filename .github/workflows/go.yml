@@ -40,7 +40,7 @@ jobs:
             README.md -s /data/configs/.markdownlint.rb
           docker run --rm -v $(pwd):/data cytopia/yamllint:1.26-0.8 .
           docker run --rm -v $(pwd):/app -w /app -e GOFLAGS=-buildvcs=false \
-            golangci/golangci-lint:v1.49.0-alpine golangci-lint run -v \
+            golangci/golangci-lint:v1.50.1-alpine golangci-lint run -v \
             --timeout 2m30s --config configs/.golangci.yml
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
       - name: Unit test
