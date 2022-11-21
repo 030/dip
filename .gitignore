@@ -1,3 +1,4 @@
 cmd/dip/dip.sha512.txt
 dip
 *.snap
+coverage.txt
