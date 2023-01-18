@@ -2,11 +2,16 @@
 ## [Unreleased]
 
 
+<a name="4.2.3"></a>
+## [4.2.3] - 2023-01-18
+### Build
+- **deps:** Update versions.
+
+
 <a name="4.2.2"></a>
 ## [4.2.2] - 2022-12-07
 ### Build
 - **auto-updater:** Update schedule.
-- **deps:** Update versions.
 
 
 <a name="4.2.1"></a>
@@ -125,7 +130,8 @@
 <a name="1.0.0"></a>
 ## 1.0.0 - 2019-11-05
 
-[Unreleased]: https://github.com/030/dip/compare/4.2.2...HEAD
+[Unreleased]: https://github.com/030/dip/compare/4.2.3...HEAD
+[4.2.3]: https://github.com/030/dip/compare/4.2.2...4.2.3
 [4.2.2]: https://github.com/030/dip/compare/4.2.1...4.2.2
 [4.2.1]: https://github.com/030/dip/compare/4.2.0...4.2.1
 [4.2.0]: https://github.com/030/dip/compare/4.1.1...4.2.0
