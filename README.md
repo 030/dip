@@ -206,7 +206,7 @@ dip image --name=adoptopenjdk --regex="14.*-jre-hotspot-bionic" --dockerfile
 [![dockeri.co](https://dockeri.co/image/utrecht/dip)](https://hub.docker.com/r/utrecht/dip)
 
 ```bash
-docker run utrecht/dip:4.2.2 dip image --name=grafana/grafana --regex=^7\.5\.7$
+docker run utrecht/dip:4.2.3 dip image --name=grafana/grafana --regex=^7\.5\.7$
 ```
 
 will return:
