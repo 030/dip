@@ -7,7 +7,7 @@ jobs:
     name: Analyze image using dockle
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Build image
         run: docker build -t utrecht/dip:${{ github.sha }} .
       - uses: hands-lab/dockle-action@v1
