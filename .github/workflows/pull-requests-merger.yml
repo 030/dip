@@ -1,0 +1,14 @@
+---
+name: pull-requests-merger
+'on':
+  push
+  # schedule:
+  #   - cron: '42 10 * * 5'
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  pull-requests-merger:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: 030/pull-requests-merger-action@22-allow-list
