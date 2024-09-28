@@ -19,7 +19,7 @@ jobs:
         run: |
           go test -short -cover -v -coverprofile=coverage.txt \
           -covermode=atomic ./...
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v4
         with:
           files: ./coverage.txt
           flags: unittests
