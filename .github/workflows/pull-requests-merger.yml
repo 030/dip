@@ -2,7 +2,6 @@
 name: pull-requests-merger
 'on':
   push
-  #
   # schedule:
   #   - cron: '42 10 * * 5'
 permissions:
