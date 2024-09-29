@@ -1,0 +1,456 @@
+{
+  "tags": [
+    {
+      "name": "sha256-05dcbf19bdc8185ea96509452c23f593de5004f8553e980682e18b7f1455f023.sig",
+      "reversion": false,
+      "start_ts": 1664976063,
+      "manifest_digest": "sha256:f74cc625a46d94030c320f09ac69509ba55aee13e35fc2a0ab381414d100646f",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Wed, 05 Oct 2022 13:21:03 -0000"
+    },
+    {
+      "name": "v1.10.0-alpha.0",
+      "reversion": false,
+      "start_ts": 1664975826,
+      "manifest_digest": "sha256:05dcbf19bdc8185ea96509452c23f593de5004f8553e980682e18b7f1455f023",
+      "is_manifest_list": true,
+      "size": null,
+      "last_modified": "Wed, 05 Oct 2022 13:17:06 -0000"
+    },
+    {
+      "name": "sha256-cd9bf3d48b6b8402a2a8b11953f9dc0275ba4beec14da47e31823a0515cde7e2.sig",
+      "reversion": false,
+      "start_ts": 1658847900,
+      "manifest_digest": "sha256:6922aad0f8ce85b288a1dc900e1d3b5cfe110ab3fe27567ae54603281d3ead95",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Tue, 26 Jul 2022 15:05:00 -0000"
+    },
+    {
+      "name": "v1.9.1",
+      "reversion": false,
+      "start_ts": 1658847701,
+      "manifest_digest": "sha256:cd9bf3d48b6b8402a2a8b11953f9dc0275ba4beec14da47e31823a0515cde7e2",
+      "is_manifest_list": true,
+      "size": null,
+      "last_modified": "Tue, 26 Jul 2022 15:01:41 -0000"
+    },
+    {
+      "name": "sha256-7d574b5599f1a664c043a3810b16661585a94f48851c0c59c7de8f1b516dfda0.sig",
+      "reversion": false,
+      "start_ts": 1658502527,
+      "manifest_digest": "sha256:f842d7a2e31a98ba3002690e5ad72d67eeb417887c0fb4c3366cc5dc111656cc",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Fri, 22 Jul 2022 15:08:47 -0000"
+    },
+    {
+      "name": "v1.9.0",
+      "reversion": false,
+      "start_ts": 1658502466,
+      "manifest_digest": "sha256:7d574b5599f1a664c043a3810b16661585a94f48851c0c59c7de8f1b516dfda0",
+      "is_manifest_list": true,
+      "size": null,
+      "last_modified": "Fri, 22 Jul 2022 15:07:46 -0000"
+    },
+    {
+      "name": "sha256-c70937373cd447aedb82cb4b6b1636785382c0a300b2b9297a27ed922f27266e.sig",
+      "reversion": false,
+      "start_ts": 1657122659,
+      "manifest_digest": "sha256:c2456e5dbf9815ec44a598cbcf5f2e328b564367707b4b785d39116d912283ab",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Wed, 06 Jul 2022 15:50:59 -0000"
+    },
+    {
+      "name": "v1.9.0-beta.1",
+      "reversion": false,
+      "start_ts": 1657122591,
+      "manifest_digest": "sha256:c70937373cd447aedb82cb4b6b1636785382c0a300b2b9297a27ed922f27266e",
+      "is_manifest_list": true,
+      "size": null,
+      "last_modified": "Wed, 06 Jul 2022 15:49:51 -0000"
+    },
+    {
+      "name": "sha256-504c4cb888db242d21c28239b74b0789ad46d9b2d19783b8ea24f651bc22495a.sig",
+      "reversion": false,
+      "start_ts": 1656950688,
+      "manifest_digest": "sha256:cbc005ba378c1d1304531fb60c2a3225d24dce0b95e3dc1721bf626a5e996d8b",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Mon, 04 Jul 2022 16:04:48 -0000"
+    },
+    {
+      "name": "v1.9.0-beta.0",
+      "reversion": false,
+      "start_ts": 1656950600,
+      "manifest_digest": "sha256:504c4cb888db242d21c28239b74b0789ad46d9b2d19783b8ea24f651bc22495a",
+      "is_manifest_list": true,
+      "size": null,
+      "last_modified": "Mon, 04 Jul 2022 16:03:20 -0000"
+    },
+    {
+      "name": "sha256-487a550f423d90ad7872a40044a06eee55167f1b1255ba23e89afe52c00bdffc.sig",
+      "reversion": false,
+      "start_ts": 1656083660,
+      "manifest_digest": "sha256:1998e16d29ce59cc09a4f1c81a8c792cd3cfc03fd41fc3e955688d071a619da4",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Fri, 24 Jun 2022 15:14:20 -0000"
+    },
+    {
+      "name": "v1.9.0-alpha.0",
+      "reversion": false,
+      "start_ts": 1656083573,
+      "manifest_digest": "sha256:487a550f423d90ad7872a40044a06eee55167f1b1255ba23e89afe52c00bdffc",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 24 Jun 2022 15:12:53 -0000"
+    },
+    {
+      "name": "sha256-814873516e6092ab38b6bb6799a8d55247a9287b474fdd09edbe021d233fc7e7.sig",
+      "reversion": false,
+      "start_ts": 1656001197,
+      "manifest_digest": "sha256:ec56cdc555a55212e0bba983a06921a52ba19ba95f48086345a24d67b8e9f3e1",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Thu, 23 Jun 2022 16:19:57 -0000"
+    },
+    {
+      "name": "v1.7.3",
+      "reversion": false,
+      "start_ts": 1656001126,
+      "manifest_digest": "sha256:814873516e6092ab38b6bb6799a8d55247a9287b474fdd09edbe021d233fc7e7",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 23 Jun 2022 16:18:46 -0000"
+    },
+    {
+      "name": "sha256-a20c44021a5dba3a391b6d14c1436edc374215718bedb57663142e50b7c61a29.sig",
+      "reversion": false,
+      "start_ts": 1655995479,
+      "manifest_digest": "sha256:ebb0488cd1bf433049851b453a2e6e6598a057306e4b4338a75a3eb0a5134b68",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Thu, 23 Jun 2022 14:44:39 -0000"
+    },
+    {
+      "name": "v1.8.2",
+      "reversion": false,
+      "start_ts": 1655995410,
+      "manifest_digest": "sha256:a20c44021a5dba3a391b6d14c1436edc374215718bedb57663142e50b7c61a29",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 23 Jun 2022 14:43:30 -0000"
+    },
+    {
+      "name": "sha256-7809d4b488662d68bd9bac42abedfab4e69bb6fe859894f945f40d6386d533d7.sig",
+      "reversion": false,
+      "start_ts": 1655224801,
+      "manifest_digest": "sha256:e8a5cb9626a83b7684d7242db103fbab8b1b3f016775c27ceb64a4e1af6db272",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Tue, 14 Jun 2022 16:40:01 -0000"
+    },
+    {
+      "name": "v1.8.1",
+      "reversion": false,
+      "start_ts": 1655224698,
+      "manifest_digest": "sha256:7809d4b488662d68bd9bac42abedfab4e69bb6fe859894f945f40d6386d533d7",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Tue, 14 Jun 2022 16:38:18 -0000"
+    },
+    {
+      "name": "sha256-e1642bf8e93357165c9f0b027397ce79fdbda8cd609ee048c69284da01401c6c.sig",
+      "reversion": false,
+      "start_ts": 1649185379,
+      "manifest_digest": "sha256:fc58372ecb0be9bb09553ffdafa8a3258156ef3aa0081676ce34ff81fd97e198",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Tue, 05 Apr 2022 19:02:59 -0000"
+    },
+    {
+      "name": "v1.8.0",
+      "reversion": false,
+      "start_ts": 1649185296,
+      "manifest_digest": "sha256:e1642bf8e93357165c9f0b027397ce79fdbda8cd609ee048c69284da01401c6c",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Tue, 05 Apr 2022 19:01:36 -0000"
+    },
+    {
+      "name": "sha256-ad39344f5733d4a7a83933e8a1769ef5ba528b91afb3280360c5bff784353f53.sig",
+      "reversion": false,
+      "start_ts": 1648827916,
+      "manifest_digest": "sha256:5dbb85db53bb059c89cb19d44d730691f4da15f40ba4659a388d07f6a48758af",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Fri, 01 Apr 2022 15:45:16 -0000"
+    },
+    {
+      "name": "v1.8.0-beta.0",
+      "reversion": false,
+      "start_ts": 1648827851,
+      "manifest_digest": "sha256:ad39344f5733d4a7a83933e8a1769ef5ba528b91afb3280360c5bff784353f53",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 01 Apr 2022 15:44:11 -0000"
+    },
+    {
+      "name": "sha256-8c116b1b1d7696a34eaa661edbfd20703ab1a12ff32db3875975b11014ec7ca8.sig",
+      "reversion": false,
+      "start_ts": 1648747406,
+      "manifest_digest": "sha256:73b1b93358e61b7834ec0b8a3dcd2ddb3cd183e2a2c3116a755cdb4fcc393713",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Thu, 31 Mar 2022 17:23:26 -0000"
+    },
+    {
+      "name": "v1.8.0-alpha.2",
+      "reversion": false,
+      "start_ts": 1648747219,
+      "manifest_digest": "sha256:8c116b1b1d7696a34eaa661edbfd20703ab1a12ff32db3875975b11014ec7ca8",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 31 Mar 2022 17:20:19 -0000"
+    },
+    {
+      "name": "sha256-4741d498b56069073c9526f55c32c266c9cf6c41101ab3923f129e11305ff6b2.sig",
+      "reversion": false,
+      "start_ts": 1648495683,
+      "manifest_digest": "sha256:d772ed9029191e1795ab2dd625450eb967ca3cf28ccfc627368ec5b1831af3f5",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Mon, 28 Mar 2022 19:28:03 -0000"
+    },
+    {
+      "name": "v1.8.0-alpha.1",
+      "reversion": false,
+      "start_ts": 1648495609,
+      "manifest_digest": "sha256:4741d498b56069073c9526f55c32c266c9cf6c41101ab3923f129e11305ff6b2",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Mon, 28 Mar 2022 19:26:49 -0000"
+    },
+    {
+      "name": "sha256-7b5f2004f61ec52cde437c4c5b7a6d8b4ea7335e52df9185670550a9bd96b08c.sig",
+      "reversion": false,
+      "start_ts": 1648135885,
+      "manifest_digest": "sha256:0aee3c78c37edaf3a400fa66ccb511a959e1cce3b35224325428223349d8f966",
+      "is_manifest_list": false,
+      "size": 256,
+      "last_modified": "Thu, 24 Mar 2022 15:31:25 -0000"
+    },
+    {
+      "name": "v1.8.0-alpha.0",
+      "reversion": false,
+      "start_ts": 1648135796,
+      "manifest_digest": "sha256:7b5f2004f61ec52cde437c4c5b7a6d8b4ea7335e52df9185670550a9bd96b08c",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 24 Mar 2022 15:29:56 -0000"
+    },
+    {
+      "name": "v1.7.2",
+      "reversion": false,
+      "start_ts": 1648065878,
+      "manifest_digest": "sha256:a7646b19e8b509f0f0ebaea52ebb4401f3ee239fcdd604b7aa6c3d829581b4e8",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 23 Mar 2022 20:04:38 -0000"
+    },
+    {
+      "name": "v1.6.3",
+      "reversion": false,
+      "start_ts": 1648052710,
+      "manifest_digest": "sha256:1a3f3aebcb439a10d263ffb03bab4e6a765e6f77b8c42c1b34be439382db5d3c",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 23 Mar 2022 16:25:10 -0000"
+    },
+    {
+      "name": "v1.7.1",
+      "reversion": false,
+      "start_ts": 1643990543,
+      "manifest_digest": "sha256:51027a4cc4d30e197e3506daf3a4fa2d2a0bc2826469f8a87848dfd279e031c0",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 04 Feb 2022 16:02:23 -0000"
+    },
+    {
+      "name": "v1.5.5",
+      "reversion": false,
+      "start_ts": 1643222876,
+      "manifest_digest": "sha256:d282221d34e6945dc29a17b284bab9d77fe44acdab30f0343832bf073683d3c6",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 26 Jan 2022 18:47:56 -0000"
+    },
+    {
+      "name": "v1.6.2",
+      "reversion": false,
+      "start_ts": 1643216292,
+      "manifest_digest": "sha256:1c4c4e140e174842ab4ed6bd4aefc35c7c54947131025534122d85c3798e5ba4",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 26 Jan 2022 16:58:12 -0000"
+    },
+    {
+      "name": "v1.7.0",
+      "reversion": false,
+      "start_ts": 1643210374,
+      "manifest_digest": "sha256:d6d12274f4b9c9c9cae2bcdc837744006d5f301c1dfa3e50f4a67d08f3bf9589",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 26 Jan 2022 15:19:34 -0000"
+    },
+    {
+      "name": "v1.7.0-beta.0",
+      "reversion": false,
+      "start_ts": 1642776346,
+      "manifest_digest": "sha256:b21dc5c61fc6382238389bc9fc9c658ed61ae557b85572601263c1ca95e5fa5f",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 21 Jan 2022 14:45:46 -0000"
+    },
+    {
+      "name": "v1.7.0-alpha.1",
+      "reversion": false,
+      "start_ts": 1642586127,
+      "manifest_digest": "sha256:a45fa8fbcd470eec3076e92a47e8710def672e50cb788965623ad1bd07aac17e",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 19 Jan 2022 09:55:27 -0000"
+    },
+    {
+      "name": "v1.7.0-alpha.0",
+      "reversion": false,
+      "start_ts": 1640107768,
+      "manifest_digest": "sha256:dcc4769fd4b1be541771a6437b1e7f38cd47c3b6c81e168da9422361f60f85d5",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Tue, 21 Dec 2021 17:29:28 -0000"
+    },
+    {
+      "name": "v1.6.1",
+      "reversion": false,
+      "start_ts": 1635776054,
+      "manifest_digest": "sha256:fef465f62524ed89c27451752385ab69e5c35ea4bc48b62bf61f733916ea674c",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Mon, 01 Nov 2021 14:14:14 -0000"
+    },
+    {
+      "name": "v1.6.0",
+      "reversion": false,
+      "start_ts": 1635257089,
+      "manifest_digest": "sha256:e5b5815a45b0256384217e256a0c9161603c271ccdb6a7669d2c62df02a7f5a2",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Tue, 26 Oct 2021 14:04:49 -0000"
+    },
+    {
+      "name": "v1.6.0-beta.0",
+      "reversion": false,
+      "start_ts": 1634306129,
+      "manifest_digest": "sha256:2cf02d3d3aa3b80d1dee5fe46fa0704a6ccf4d8fc0004c348bc02ec9ee35f690",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 15 Oct 2021 13:55:29 -0000"
+    },
+    {
+      "name": "v1.6.0-alpha.2",
+      "reversion": false,
+      "start_ts": 1634207573,
+      "manifest_digest": "sha256:3e546361bbf5b4bd47dafa96900a9d859f271bd5ee1bc27d890d1dba5a23805b",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 14 Oct 2021 10:32:53 -0000"
+    },
+    {
+      "name": "v1.6.0-alpha.1",
+      "reversion": false,
+      "start_ts": 1633093871,
+      "manifest_digest": "sha256:ad242adf18b5cb05869f8864e74c57324cee46e8c80d30709b174fefa0cefb79",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 01 Oct 2021 13:11:11 -0000"
+    },
+    {
+      "name": "v1.5.4",
+      "reversion": false,
+      "start_ts": 1633019818,
+      "manifest_digest": "sha256:ed41b2cd693c2716b3910619746a22ec09a9d4134b82b05834b5f51680301b96",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 30 Sep 2021 16:36:58 -0000"
+    },
+    {
+      "name": "v1.6.0-alpha.0",
+      "reversion": false,
+      "start_ts": 1631810252,
+      "manifest_digest": "sha256:994abc5eeaa478d84ae4c69f7a70a8db66d9eec90915de8f4e91e3553a31b8a5",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Thu, 16 Sep 2021 16:37:32 -0000"
+    },
+    {
+      "name": "v1.5.3",
+      "reversion": false,
+      "start_ts": 1629824562,
+      "manifest_digest": "sha256:7b039d469ed739a652f3bb8a1ddc122942b66cceeb85bac315449724ee64287f",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Tue, 24 Aug 2021 17:02:42 -0000"
+    },
+    {
+      "name": "v1.4.4",
+      "reversion": false,
+      "start_ts": 1629815965,
+      "manifest_digest": "sha256:1ef19c9e42863d4c3920172fd730942fdff565a6b415d7efb3123808eac75ace",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Tue, 24 Aug 2021 14:39:25 -0000"
+    },
+    {
+      "name": "v1.5.2",
+      "reversion": false,
+      "start_ts": 1629456178,
+      "manifest_digest": "sha256:3ef774a43e27bbb91c01440eeb20886e62f0d3202685f709911fc1e1978da995",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Fri, 20 Aug 2021 10:42:58 -0000"
+    },
+    {
+      "name": "v1.5.1",
+      "reversion": false,
+      "start_ts": 1629125197,
+      "manifest_digest": "sha256:330f19ed47bdbd34a0c11c5a58ccceead1b118eb29aa7202d374e71003937d48",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Mon, 16 Aug 2021 14:46:37 -0000"
+    },
+    {
+      "name": "v1.5.0",
+      "reversion": false,
+      "start_ts": 1628690136,
+      "manifest_digest": "sha256:997561e249eec35361bdf36785e99374aac0dfb668f27b30cf0b066245e5e383",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Wed, 11 Aug 2021 13:55:36 -0000"
+    },
+    {
+      "name": "v1.5.0-beta.1",
+      "reversion": false,
+      "start_ts": 1628520651,
+      "manifest_digest": "sha256:e9ebb4d795db71e6b40de49813ad6c11e53e75ad7b19c8c3568d0cd5494d2aa1",
+      "is_manifest_list": true,
+      "size": 0,
+      "last_modified": "Mon, 09 Aug 2021 14:50:51 -0000"
+    }
+  ],
+  "page": 1,
+  "has_additional": true
+}

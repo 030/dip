@@ -1,0 +1,35 @@
+---
+name: kdiutd
+base: core20
+version: 4.2.3
+summary: Docker Image Patrol
+description: |
+  Keep docker images up-to-date.
+grade: stable
+confinement: strict
+apps:
+  dip:
+    command: dip
+plugs:
+  dip-home:
+    interface: home
+  dip-network:
+    interface: network
+parts:
+  dip:
+    plugin: nil
+    build-packages:
+      - curl
+    override-build: |
+      cd $SNAPCRAFT_PART_INSTALL
+      export DIP_URL=https://github.com/030/dip/releases/download
+      export DIP_URL_VERSION=${DIP_URL}/${SNAPCRAFT_PROJECT_VERSION}
+      curl -fL ${DIP_URL_VERSION}/dip-ubuntu-20.04 \
+        -o dip-ubuntu-20.04
+      curl -fL ${DIP_URL_VERSION}/dip-ubuntu-20.04.sha512.txt \
+        -o dip-sha.txt
+      sha512sum -c dip-sha.txt
+      mv dip-ubuntu-20.04 dip
+      chmod +x ./dip
+      ./dip --version |\
+         grep "^dip version refs/tags/${SNAPCRAFT_PROJECT_VERSION}$"

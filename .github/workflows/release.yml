@@ -1,0 +1,79 @@
+---
+name: Release
+'on':
+  push:
+    tags:
+      - '*'
+jobs:
+  release:
+    name: Create Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-10.15
+            shasum: shasum -a 512
+          - os: ubuntu-20.04
+            shasum: sha512sum
+          - os: windows-2019
+            shasum: sha512sum
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.19.0
+      # yamllint disable rule:line-length
+      - name: Set DIP deliverable environment variable
+        run: echo "dip-deliverable=dip-${{ matrix.os }}" >> $GITHUB_ENV
+        if: ${{ startsWith(matrix.os, 'mac') || startsWith(matrix.os, 'ubuntu') }}
+      - name: Set DIP deliverable environment variable on Windows
+        run: echo "dip-deliverable=dip-${{ matrix.os }}" >> $env:GITHUB_ENV
+        if: ${{ startsWith(matrix.os, 'windows') }}
+      - name: Use the value
+        run: |
+          echo "${{ env.dip-deliverable }}"
+      - name: Check whether all versions have been updated
+        run: |
+          version=$(echo "${{ github.ref }}" | sed -e "s|.*\/\(.*\)$|\1|")
+          echo "Version: ${version}"
+          echo "Checking build/package/snap/snapcraft.yaml..."
+          grep ${version} build/package/snap/snapcraft.yaml
+          echo "Checking deployments/k8s-and-openshift/deploy.yml..."
+          grep ${version} deployments/k8s-and-openshift/deploy.yml
+          echo "Checking README.md..."
+          grep "dip:${version}" README.md
+        if: ${{ startsWith(matrix.os, 'mac') || startsWith(matrix.os, 'ubuntu') }}
+      - name: Create release
+        run: ./scripts/build.sh
+        env:
+          DIP_DELIVERABLE: ${{ env.dip-deliverable }}
+          GITHUB_TAG: ${{ github.ref }}
+          SHA512_CMD: ${{ matrix.shasum }}
+        if: ${{ startsWith(matrix.os, 'mac') || startsWith(matrix.os, 'ubuntu') }}
+
+      - name: Create release windows
+        shell: cmd
+        run: |
+          echo "GITHUB_TAG: '${{ github.ref }}' DIP_DELIVERABLE: '${{ env.dip-deliverable }}'"
+          cd cmd/dip
+          go build -ldflags "-X main.Version=${{ github.ref }}" -o "${{ env.dip-deliverable }}"
+          sha512sum "${{ env.dip-deliverable }}" > "${{ env.dip-deliverable }}.sha512.txt"
+          chmod +x "${{ env.dip-deliverable }}"
+          ls dip-windows-2019
+        if: ${{ startsWith(matrix.os, 'windows') }}
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: cmd/dip/${{ env.dip-deliverable }}
+          asset_name: ${{ env.dip-deliverable }}
+          tag: ${{ github.ref }}
+      - name: Upload checksums
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: cmd/dip/${{ env.dip-deliverable }}.sha512.txt
+          asset_name: ${{ env.dip-deliverable }}.sha512.txt
+          tag: ${{ github.ref }}
