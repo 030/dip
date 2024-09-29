@@ -13,3 +13,5 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: 030/pull-requests-merger-action@22-allow-list
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
