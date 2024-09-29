@@ -4,7 +4,6 @@ name: pull-requests-merger
   push
   # schedule:
   #   - cron: '42 10 * * 5'
-  #
 permissions:
   actions: write
   contents: write
