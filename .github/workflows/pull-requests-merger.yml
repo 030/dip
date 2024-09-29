@@ -8,6 +8,7 @@ name: pull-requests-merger
 permissions:
   contents: write
   pull-requests: write
+  workflows: write
 jobs:
   pull-requests-merger:
     runs-on: ubuntu-22.04
