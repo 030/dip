@@ -1,4 +1,4 @@
-FROM golang:1.21.5-alpine3.17 as builder
+FROM golang:1.23.3-alpine3.17 as builder
 ENV USERNAME=dip
 ENV BASE=/opt/${USERNAME}
 COPY . /go/${USERNAME}/
