@@ -10,7 +10,7 @@ RUN apk add --no-cache curl=~7 git=~2 && \
     chmod +x user.sh && \
     ./user.sh
 
-FROM alpine:3.20.1
+FROM alpine:3.21.1
 ENV BIN=/usr/local/bin/
 ENV USERNAME=dip
 ENV BASE=/opt/${USERNAME}
