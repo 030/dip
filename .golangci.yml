@@ -1,0 +1,64 @@
+---
+version: "2"
+linters:
+  default: all
+  disable:
+    - err113
+    - errorlint
+    - exhaustruct
+    - forbidigo
+    - forcetypeassert
+    - funcorder
+    - gochecknoinits
+    - gochecknoglobals
+    - gocritic
+    - godot
+    - gosec
+    - ireturn
+    - lll
+    - mnd
+    - nlreturn
+    - noctx
+    - paralleltest
+    - perfsprint
+    - recvcheck
+    - revive
+    - tagliatelle
+    - testpackage
+    - testifylint
+    - varnamelen
+    - whitespace
+    - wrapcheck
+    - wsl
+  settings:
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: log
+              desc: Use 'log "github.com/sirupsen/logrus"' instead
+            - pkg: github.com/pkg/errors
+              desc: Should be replaced by standard lib errors package
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

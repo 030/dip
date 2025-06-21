@@ -1,30 +1,30 @@
 ---
 name: Docker
-'on':
+"on":
+  # required by gomod-go-version-updater to trigger this action once pr has
+  # been reviewed
+  pull_request_review:
+    types: [submitted]
   push:
-    tags:
-      - '*'
+permissions:
+  contents: read
+  packages: write
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  mcvs-docker-action:
+    strategy:
+      matrix:
+        args:
+          - build-args: "dip"
+            image-suffix: ""
+    runs-on: ubuntu-24.04
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+      - uses: actions/checkout@v4.2.2
+      - uses: schubergphilis/mcvs-docker-action@v0.7.2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: version
-        id: version
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: utrecht/dip:${{ steps.version.outputs.version }}
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+          build-args: ${{ matrix.args.build-args }}
+          images: |-
+            ghcr.io/${{ github.repository }}${{ matrix.args.image-suffix }}
+          # yamllint disable rule:line-length
+          dockle-accept-key: APPLICATION,libcrypto3,libssl3
+          # yamllint enable rule:line-length
+          token: ${{ secrets.GITHUB_TOKEN }}
