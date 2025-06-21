@@ -3,7 +3,8 @@ version: 2
 updates:
   - package-ecosystem: "docker"
     directory: "/"
-    prefix: "build(deps)"
+    commit-message:
+      prefix: "build(deps)"
     schedule:
       interval: "weekly"
     groups:
@@ -12,7 +13,8 @@ updates:
           - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
-    prefix: "build(deps)"
+    commit-message:
+      prefix: "build(deps)"
     schedule:
       interval: "weekly"
     groups:
@@ -21,7 +23,8 @@ updates:
           - "*"
   - package-ecosystem: "gomod"
     directory: "/"
-    prefix: "build(deps)"
+    commit-message:
+      prefix: "build(deps)"
     schedule:
       interval: "weekly"
     groups:
