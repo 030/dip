@@ -1,0 +1,10 @@
+---
+dir: "{{.InterfaceDir}}/mocks"
+filename: "{{.InterfaceName | snakecase}}.go"
+structname: "{{.InterfaceName}}"
+pkgname: mocks
+template: testify
+packages:
+  github.com/030/dip/internal/quay:
+    interfaces:
+      HTTPGetter: {}

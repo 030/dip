@@ -11,6 +11,25 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+type HTTPGetter interface {
+	Get(url string) (resp *http.Response, err error)
+}
+
+type HTTPGet struct{}
+
+func (h HTTPGet) Get(url string) (*http.Response, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+type Quay struct {
+	HTTPGetter HTTPGetter
+	Image      string
+}
+
 func checkForEachTagWhetherItMatchesTheRegexSortItAndReturnLatestTag(latest string, tags []string) (string, error) {
 	r, err := regexp.Compile(latest)
 	if err != nil {
@@ -37,8 +56,8 @@ func checkForEachTagWhetherItMatchesTheRegexSortItAndReturnLatestTag(latest stri
 	return latestTag, nil
 }
 
-func jsonTags(image string) ([]byte, error) {
-	resp, err := http.Get("https://quay.io/api/v1/repository/" + image + "/tag/")
+func (q Quay) jsonTags() ([]byte, error) {
+	resp, err := q.HTTPGetter.Get("https://quay.io/api/v1/repository/" + q.Image + "/tag/")
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +91,8 @@ func latest(json []byte, regex string) (string, error) {
 	return latestTag, nil
 }
 
-func LatestTagBasedOnRegex(regex, image string) (string, error) {
-	j, err := jsonTags(image)
+func (q Quay) LatestTagBasedOnRegex(regex, image string) (string, error) {
+	j, err := q.jsonTags()
 	if err != nil {
 		return "", err
 	}

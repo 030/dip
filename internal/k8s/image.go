@@ -19,9 +19,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-var (
-	clusterImages []string
-)
+var clusterImages []string
 
 type Images struct {
 	SlackChannelID, SlackToken string
