@@ -1,5 +1,7 @@
+*.snap
+.task
 cmd/dip/dip.sha512.txt
 coverage.txt
 dip
-*.snap
-.task
+profile.cov
+unique_profile.cov

@@ -24,7 +24,5 @@ jobs:
           build-args: ${{ matrix.args.build-args }}
           images: |-
             ghcr.io/${{ github.repository }}${{ matrix.args.image-suffix }}
-          # yamllint disable rule:line-length
           dockle-accept-key: APPLICATION,libcrypto3,libssl3
-          # yamllint enable rule:line-length
           token: ${{ secrets.GITHUB_TOKEN }}

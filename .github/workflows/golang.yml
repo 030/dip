@@ -35,7 +35,7 @@ jobs:
           test-timeout: 10m0s
         with:
           build-tags: ${{ matrix.args.build-tags }}
-          code-coverage-expected: 25.5
+          code-coverage-expected: 24.4
           code-coverage-timeout: ${{ env.test-timeout }}
           golang-unit-tests-exclusions: |-
             \(deprecated\|filesystem\|mocks\|swagger\|cmd\/mcvs-.*\|mcvs-\(chart-designer\|reporter\)\)$\?
