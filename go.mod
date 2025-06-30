@@ -6,7 +6,7 @@ require (
 	github.com/levigross/grequests v0.0.0-20221222020224-9eee758d18d5
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.9.3
-	github.com/slack-go/slack v0.17.1
+	github.com/slack-go/slack v0.17.2
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/jwalterweatherman v1.1.0
 	github.com/spf13/viper v1.20.1
