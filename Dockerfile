@@ -1,7 +1,7 @@
 ARG APPLICATION=dip \
     VERSION=0.1.0-rc.1
 
-FROM golang:1.24.5-alpine as builder
+FROM golang:1.24.6-alpine as builder
 ARG APPLICATION \
     VERSION
 RUN adduser -D -g '' ${APPLICATION}
