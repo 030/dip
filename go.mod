@@ -1,6 +1,6 @@
 module github.com/030/dip
 
-go 1.24.5
+go 1.25.0
 
 require (
 	github.com/levigross/grequests v0.0.0-20221222020224-9eee758d18d5
