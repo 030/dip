@@ -29,8 +29,8 @@ jobs:
     env:
       TASK_X_REMOTE_TASKFILES: 1
     steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: schubergphilis/mcvs-golang-action@v3.4.1
+      - uses: actions/checkout@v5
+      - uses: schubergphilis/mcvs-golang-action@v3.7.2
         env:
           test-timeout: 10m0s
         with:
